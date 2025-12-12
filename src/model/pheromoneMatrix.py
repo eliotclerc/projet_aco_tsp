@@ -36,6 +36,9 @@ class PheromoneMatrix:
             pheromone *= (1 - rho)
 
     def display(self):
+        """
+        Print the pheromone matrix row by row.
+        """
         for row in self.pheromone_quantity:
             for column in row:
                 print(column, end=" ")
