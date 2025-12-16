@@ -22,6 +22,7 @@ class ViewModelAnt:
             curr_model_node (Node): The current node in the cycle
             animation_progress (float): Animation progress between 0.0 and 1.0
         """
+        
         self.prev_model_node = prev_model_node
         self.curr_model_node = curr_model_node
         # Clamp animation progress between 0.0 and 1.0
@@ -37,15 +38,13 @@ class ViewModelAnt:
         Returns:
             Tuple[int, int]: The (x, y) coordinates of the ant
         """
-        # Get the coordinates of both nodes
+        
         prev_warehouse = warehouse_map.get(self.prev_model_node.node_id)
         curr_warehouse = warehouse_map.get(self.curr_model_node.node_id)
 
-        # Return default position if nodes not found
         if prev_warehouse is None or curr_warehouse is None:
             return (0, 0)
 
-        # Linear interpolation between the two nodes
         x1, y1 = prev_warehouse.screen_x, prev_warehouse.screen_y
         x2, y2 = curr_warehouse.screen_x, curr_warehouse.screen_y
 
@@ -64,9 +63,9 @@ class ViewModelAnt:
         Returns:
             bool: True if animation is complete, False otherwise
         """
+        
         self.animation_progress = min(1.0, self.animation_progress + delta_progress)
         
-        # Returns True if animation is complete
         return self.animation_progress >= 1.0
     
     @staticmethod
@@ -82,6 +81,7 @@ class ViewModelAnt:
         Returns:
             ViewModelAnt: Instance created from the cycle
         """
+        
         if len(ant_cycle_node_ids) < 2:
             raise ValueError("The cycle must contain at least 2 nodes to create a ViewModelAnt")
         
@@ -90,7 +90,6 @@ class ViewModelAnt:
         prev_index = current_edge_index % len(ant_cycle_node_ids)
         curr_index = (current_edge_index + 1) % len(ant_cycle_node_ids)
         
-        # Create Node objects from the IDs
         prev_node = Node(ant_cycle_node_ids[prev_index])
         curr_node = Node(ant_cycle_node_ids[curr_index])
         
