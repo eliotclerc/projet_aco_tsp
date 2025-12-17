@@ -12,7 +12,8 @@ edge_screen = []
 
 
 vA1 = viewAnt(100,100)
-ants_list = [vA1]
+vA2 = viewAnt(700,100)
+ants_list = [vA1,vA2]
 whs = [viewWarehouse(screenX=x, screenY=y) for (x, y) in warehouses_positions]
 
 
@@ -40,6 +41,9 @@ if __name__ == "__main__":
     print(path_pairs)
     frame.move_ants(frame.ants[0],path_pairs[0][0],path_pairs[0][1])
     frame.move_ants(frame.ants[0],path_pairs[1][0],path_pairs[1][1])
+
+    frame.move_ants(frame.ants[1],path_pairs[1][0],path_pairs[1][1])
+    frame.move_ants(frame.ants[1],path_pairs[2][0],path_pairs[2][1])
 
     app.mainloop()
 

@@ -1,7 +1,7 @@
 from collections import deque
 class viewAnt :
 
-    def __init__(self, screenX,screenY,is_moving = False):
+    def __init__(self, screenX,screenY):
         """
         initializes position of object ant
 
@@ -12,7 +12,7 @@ class viewAnt :
         """
         self.screenX = screenX
         self.screenY = screenY
-        self.is_moving = is_moving
+        self.is_moving = False
         self.move_queue = deque()
 
     def update(self):
