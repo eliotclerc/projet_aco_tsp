@@ -1,6 +1,15 @@
 class viewWarehouse : 
 
     def __init__(self, screenX,screenY,idWarehouse=None):
+        """
+        Initializes on the canva a warehouse at coordinates screenX & screenY 
+        
+        :param self: Description
+        :param screenX: Description
+        :param screenY: Description
+        :param idWarehouse: Description
+        """
+        
         self.screenX = screenX
         self.screenY = screenY
         self.idWarehouse = idWarehouse
@@ -8,9 +17,8 @@ class viewWarehouse :
 
     def getIdWarehouse(): 
         return None
-"""
 
-    def getCoordinates(self):
-        return [self.screenX,self.screenY]
 
-"""
+ 
+
+

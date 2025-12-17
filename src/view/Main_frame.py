@@ -5,7 +5,19 @@ from math import sqrt
 class Main_frame(tk.ttk.Frame):
 
     def __init__(self, container,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = []):
+        """
+        Initializes the tkinter window, creates all of the buttons and the canva, defines the methods to 
+        make the animations
         
+        :param self: Description
+        :param container: instance of Frame_app
+        :param nb_ants: int
+        :param nb_wh: int
+        :param warehouses: instance of viewWarehouse
+        :param ants: instance of viewAnt
+        :param edges: instance of viewEdge
+        """
+
         self.warehouses = warehouses
         self.nb_ants = nb_ants
         self.nb_wh = nb_wh
@@ -72,22 +84,9 @@ class Main_frame(tk.ttk.Frame):
         self.ant_label = tk.ttk.Label(self, text=f"Number of ants set to: {self.nb_ants}",font = custom_font,foreground="darkblue",borderwidth=2,relief="solid")
         self.ant_label.grid(column=2, row=1, sticky="NSEW", padx=110)
          
-        self.init_container_on_canva()
-        self.spawn_ants()
-
-       
-        path = ants[0].update()
-        path_pairs = [(path[i], path[i+1]) for i in range(0, len(path), 2)]
-
-        for i in self.ants : 
-            self.move_ants(i, path_pairs[0][0], path_pairs[0][1], edge=edges[0])
-
         
-        
-
-
     def set(self):
-        """  Handle button click event
+        """  Handle set button click event
         """        
         try:
             value = int(self.ant.get())
@@ -98,6 +97,11 @@ class Main_frame(tk.ttk.Frame):
             self.result_label.config(text="Invalid number")
 
     def init_container_on_canva(self) : 
+        """
+        Creates the containers and the edges between them visually on the canvas
+        
+        :param self: 
+        """
         
         for i in self.warehouses : 
             self.canvas1.create_oval(i.screenX - i.r, i.screenY - i.r,i.screenX + i.r, i.screenY + i.r,fill="",outline="red",width=3)
@@ -107,28 +111,47 @@ class Main_frame(tk.ttk.Frame):
         
 
     def spawn_ants(self):
+        """
+        Creates the ants visually on the canvas
 
+        :param self:
+        """
         for ant in self.ants:
             ant.canvas_id = self.canvas1.create_oval(ant.screenX - 5, ant.screenY - 5,ant.screenX + 5, ant.screenY + 5,fill="blue")
 
     def change_edge_color(self,edge_to_change):
-
+        """
+        Docstring for change_edge_color
+        
+        :param self: 
+        :param edge_to_change: canvas id number associated to every edge from one to n, from the first to the last created in in_container_on_canva
+        """
         edge_to_change.update()
         self.canvas1.itemconfig(edge_to_change.canvas_id, fill=edge_to_change.colors[edge_to_change.pheromon_coeff], width=5)
 
-    def move_ants(self, ant, x_target, y_target, speed=2, edge=None):
-
+    def move_ants(self, ant, x_target, y_target, speed=2,callback=None):
+        """
+        Makes an ant visually move from its position screenX & screenY to x_target & y_target.
+        
+        :param self: Description
+        :param ant: instance of viewAnt
+        :param x_target: int
+        :param y_target: int
+        :param speed: int
+        """
         dx = x_target - ant.screenX
         dy = y_target - ant.screenY
         dist = sqrt(dx*dx + dy*dy)
+       
 
         if dist <= speed:
             self.canvas1.move(ant.canvas_id, dx, dy)
             ant.screenX = x_target
             ant.screenY = y_target
 
-            if edge is not None:
-                self.change_edge_color(edge) 
+            if callback:
+                callback()
+        
 
             return
 
@@ -140,7 +163,7 @@ class Main_frame(tk.ttk.Frame):
         ant.screenX += dx * speed
         ant.screenY += dy * speed
 
-        self.canvas1.after(10, self.move_ants, ant, x_target, y_target, speed, edge)
+        self.canvas1.after(10, self.move_ants, ant, x_target, y_target, speed,callback)
 
 
     

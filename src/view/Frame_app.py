@@ -4,6 +4,11 @@ import tkinter as tk
 class Frame_app(tk.Tk):
 
     def __init__(self):
+        """
+        Initializes instances of Frame_app to define, frame size and the main frames root
+        
+        :param self: 
+        """
         super().__init__()
 
         root = tk.Tk()
