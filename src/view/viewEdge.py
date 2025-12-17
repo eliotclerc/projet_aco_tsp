@@ -1,16 +1,5 @@
 class viewEdge :
-    colors = [
-    "#1a237e",  
-    "#283593",
-    "#1565c0",
-    "#0288d1",
-    "#26c6da",
-    "#4db6ac",
-    "#81c784",
-    "#aed581",
-    "#ffeb3b",
-    "#f57f17"
-]
+    
     
     def __init__(self,warehouse1,warehouse2,pheromon_coeff = 0) :
         """
