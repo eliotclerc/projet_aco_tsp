@@ -20,7 +20,7 @@ class viewEdge :
         
         :param self: Description
         """
-        self.pheromon_coeff += 1  
+        self.pheromon_coeff += 5
 
 
 

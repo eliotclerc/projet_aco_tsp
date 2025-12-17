@@ -137,55 +137,57 @@ class Main_frame(tk.ttk.Frame):
         for ant in self.ants:
             ant.canvas_id = self.canvas1.create_oval(ant.screenX - 5, ant.screenY - 5,ant.screenX + 5, ant.screenY + 5,fill="blue")
 
-    def change_edge_color(self,edge_to_change):
+
+
+    def update_colors(self):
         """
         Docstring for change_edge_color
-        
+
         :param self: 
         :param edge_to_change: canvas id number associated to every edge from one to n, from the first to the last created in in_container_on_canva
         """
-        edge_to_change.update()
-        self.canvas1.itemconfig(edge_to_change.canvas_id, fill=self.colors[edge_to_change.pheromon_coeff], width=5)
+        for i in self.edges : 
+            i.update()
+            self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=5)
 
-    def move_ants(self, ant, x_target, y_target, speed=2,callback=None):
-        """
-        Makes an ant visually move from its position screenX & screenY to x_target & y_target.
-        
-        :param self: Description
-        :param ant: instance of viewAnt
-        :param x_target: int
-        :param y_target: int
-        :param speed: int
-        """
-        dx = x_target - ant.screenX
-        dy = y_target - ant.screenY
-        dist = sqrt(dx*dx + dy*dy)
-       
 
-        if dist <= speed:
-            self.canvas1.move(ant.canvas_id, dx, dy)
-            ant.screenX = x_target
-            ant.screenY = y_target
+    def move_ants(self, ant, x_target, y_target, speed=2):
 
-            if callback:
-                callback()
-        
+        ant.move_queue.append((x_target, y_target, speed))
+        if ant.is_moving:
+            return 
 
+        self._start_next_move(ant)
+
+    def _start_next_move(self, ant):
+        if not ant.move_queue:
+            ant.is_moving = False
+            self.update_colors()
             return
 
-        dx /= dist
-        dy /= dist
+        ant.is_moving = True
+        x_target, y_target, speed = ant.move_queue.popleft()
 
-    
-        self.canvas1.move(ant.canvas_id, dx * speed, dy * speed)
-        ant.screenX += dx * speed
-        ant.screenY += dy * speed
+        def step():
+            dx = x_target - ant.screenX
+            dy = y_target - ant.screenY
+            dist = sqrt(dx * dx + dy * dy)
 
-        self.canvas1.after(10, self.move_ants, ant, x_target, y_target, speed,callback)
+            if dist <= speed:
+                self.canvas1.move(ant.canvas_id, dx, dy)
+                ant.screenX = x_target
+                ant.screenY = y_target
+                ant.is_moving = False
+                self._start_next_move(ant)
+                return
 
+            dxn = dx / dist
+            dyn = dy / dist
 
-    
+            self.canvas1.move(ant.canvas_id, dxn * speed, dyn * speed)
+            ant.screenX += dxn * speed
+            ant.screenY += dyn * speed
 
-    
+            self.canvas1.after(10, step)
 
-
+        step()

@@ -28,14 +28,19 @@ for i in whs :
 if __name__ == "__main__":
 
     app = Frame_app()
+    
+    #Test ici, je créer un fenetre avec l'interface complète, je place des entrpôts arbitrairement, 
+    #Je créer une fourmis, je la fais bouger d'un entrepots à une autre puis à un denier, enfin 
+    
     frame = Main_frame(app,warehouses=whs,ants = ants_list,edges=edge_screen)
     frame.init_container_on_canva()
     frame.spawn_ants()
 
     path_pairs = frame.ants[0].update()
-    
     print(path_pairs)
-    frame.move_ants(frame.ants[0],path_pairs[0][0],path_pairs[0][1],callback=lambda:frame.move_ants(frame.ants[0],path_pairs[1][0],path_pairs[1][1]))
+    frame.move_ants(frame.ants[0],path_pairs[0][0],path_pairs[0][1])
+    frame.move_ants(frame.ants[0],path_pairs[1][0],path_pairs[1][1])
+
     app.mainloop()
 
 
