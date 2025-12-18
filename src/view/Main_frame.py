@@ -27,6 +27,7 @@ class Main_frame(tk.ttk.Frame):
         self.edges = edges
         self.play = False
         self.animating = False
+        self.paused = False
 
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
@@ -75,7 +76,7 @@ class Main_frame(tk.ttk.Frame):
 
 
         self.start_button = tk.ttk.Button(btn_frame, text="▶️ Start",command = self.start).grid(row=0, column=0, padx=2)
-        tk.ttk.Button(btn_frame, text="⏹️ Stop").grid(row=0, column=1, padx=2)
+        self.stop_button = tk.ttk.Button(btn_frame, text="⏹️ Stop",command = self.stop).grid(row=0, column=1, padx=2)
 
         #reset button 
         tk.ttk.Button(left, text="Reset", command=self.set).grid(row=5, column=0, sticky="EW", pady=5)
@@ -124,8 +125,15 @@ class Main_frame(tk.ttk.Frame):
         """  Handle start button click event
         """        
         if self.animating:
-            return
-        self.play = True
+            self.paused = False
+
+        else : 
+            self.play = True
+
+    def stop(self):
+        if self.animating:
+            self.paused = True
+
                 
         
 
@@ -181,6 +189,7 @@ class Main_frame(tk.ttk.Frame):
 
             if all(not a.is_moving for a in self.ants):
                 self.animating = False
+                self.paused = False
                 self.update_colors()
             return
 
@@ -188,6 +197,10 @@ class Main_frame(tk.ttk.Frame):
         x_target, y_target, speed = ant.move_queue.popleft()
 
         def step():
+            if self.paused:
+                self.canvas1.after(50, step)
+                return
+            
             dx = x_target - ant.screenX
             dy = y_target - ant.screenY
             dist = sqrt(dx * dx + dy * dy)
