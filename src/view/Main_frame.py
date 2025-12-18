@@ -25,6 +25,9 @@ class Main_frame(tk.ttk.Frame):
         self.nb_wh = nb_wh
         self.ants= ants
         self.edges = edges
+        self.play = False
+        self.animating = False
+
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
         super().__init__(container)
@@ -68,7 +71,10 @@ class Main_frame(tk.ttk.Frame):
         btn_frame.grid(row=4, column=0, sticky="W", pady=10)
 
 
-        tk.ttk.Button(btn_frame, text="▶️ Start").grid(row=0, column=0, padx=2)
+        #Adding start & stop button
+
+
+        self.start_button = tk.ttk.Button(btn_frame, text="▶️ Start",command = self.start).grid(row=0, column=0, padx=2)
         tk.ttk.Button(btn_frame, text="⏹️ Stop").grid(row=0, column=1, padx=2)
 
         #reset button 
@@ -113,6 +119,15 @@ class Main_frame(tk.ttk.Frame):
             self.ant_label.config(text=f"Number of ants set to: {self.nb_ants}")
         except ValueError:
             self.result_label.config(text="Invalid number")
+
+    def start(self):
+        """  Handle start button click event
+        """        
+        if self.animating:
+            return
+        self.play = True
+                
+        
 
     def init_container_on_canva(self) : 
         """
@@ -160,9 +175,13 @@ class Main_frame(tk.ttk.Frame):
         self._start_next_move(ant)
 
     def _start_next_move(self, ant):
+        
         if not ant.move_queue:
             ant.is_moving = False
-            self.update_colors()
+
+            if all(not a.is_moving for a in self.ants):
+                self.animating = False
+                self.update_colors()
             return
 
         ant.is_moving = True

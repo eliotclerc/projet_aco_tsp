@@ -39,13 +39,25 @@ if __name__ == "__main__":
 
     path_pairs = frame.ants[0].update()
     print(path_pairs)
-    frame.move_ants(frame.ants[0],path_pairs[0][0],path_pairs[0][1])
-    frame.move_ants(frame.ants[0],path_pairs[1][0],path_pairs[1][1])
 
-    frame.move_ants(frame.ants[1],path_pairs[1][0],path_pairs[1][1])
-    frame.move_ants(frame.ants[1],path_pairs[2][0],path_pairs[2][1])
+   
+    def check_start():
+        if frame.play and not frame.animating:
+            frame.play = False
+            frame.animating = True
 
+            frame.move_ants(frame.ants[0], path_pairs[0][0], path_pairs[0][1])
+            frame.move_ants(frame.ants[0], path_pairs[1][0], path_pairs[1][1])
+
+            frame.move_ants(frame.ants[1], path_pairs[1][0], path_pairs[1][1])
+            frame.move_ants(frame.ants[1], path_pairs[2][0], path_pairs[2][1])
+
+        app.after(50, check_start)
+
+
+    check_start()
     app.mainloop()
 
+    
 
 
