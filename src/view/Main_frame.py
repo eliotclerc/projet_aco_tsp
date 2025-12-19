@@ -28,6 +28,11 @@ class Main_frame(tk.ttk.Frame):
         self.play = False
         self.animating = False
         self.paused = False
+        self.timeline = []
+        self.mode = "live"
+        self.pixel_counter = 0
+
+
 
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
@@ -109,6 +114,13 @@ class Main_frame(tk.ttk.Frame):
         self.heatbar.create_text(35, h-10, text="max", anchor="w")
         self.heatbar.create_text(35, 10, text="min", anchor="w")
 
+
+        #Adding the step slider
+    
+        self.step_slider = tk.Scale(self,from_=0,to=0,orient="horizontal",command=self.on_slider,state="disabled")
+        self.step_slider.grid(row=2, column=2, sticky="EW", padx=110, pady=5)
+
+
         
     def set(self):
         """  Handle set button click event
@@ -129,6 +141,9 @@ class Main_frame(tk.ttk.Frame):
 
         else : 
             self.play = True
+            self.mode = "live"
+            self.timeline.clear()
+            self.step_slider.config(state="disabled")
 
     def stop(self):
         if self.animating:
@@ -190,7 +205,11 @@ class Main_frame(tk.ttk.Frame):
             if all(not a.is_moving for a in self.ants):
                 self.animating = False
                 self.paused = False
+                self.mode = "replay"
                 self.update_colors()
+                self.step_slider.config(to=len(self.timeline) - 1,state="normal")
+                self.step_slider.set(len(self.timeline) - 1)
+
             return
 
         ant.is_moving = True
@@ -210,6 +229,8 @@ class Main_frame(tk.ttk.Frame):
                 ant.screenX = x_target
                 ant.screenY = y_target
                 ant.is_moving = False
+                if self.mode == "live":
+                    self.save_state()
                 self._start_next_move(ant)
                 return
 
@@ -220,6 +241,37 @@ class Main_frame(tk.ttk.Frame):
             ant.screenX += dxn * speed
             ant.screenY += dyn * speed
 
+            if self.mode == "live":
+                self.pixel_counter +=1
+                if self.pixel_counter % 5 == 0:
+                    self.save_state()
             self.canvas1.after(10, step)
 
         step()
+
+    def save_state(self):
+        """
+        Function to save the successive positions of the ants and the edges pheromnones
+        coefficients
+        :param self: 
+        """
+        self.timeline.append({"ants": [(a.screenX, a.screenY) for a in self.ants],"edges": [e.pheromon_coeff for e in self.edges]})
+
+
+    def render_step(self, idx):
+        state = self.timeline[idx]
+
+        for ant, (x, y) in zip(self.ants, state["ants"]):
+            self.canvas1.coords(ant.canvas_id,x-5, y-5, x+5, y+5)
+            ant.screenX = x
+            ant.screenY = y
+
+       
+        for edge, coeff in zip(self.edges, state["edges"]):
+            self.canvas1.itemconfig(edge.canvas_id,fill=self.colors[coeff])
+
+
+    def on_slider(self, value):
+        if self.mode != "replay":
+            return
+        self.render_step(int(value))
