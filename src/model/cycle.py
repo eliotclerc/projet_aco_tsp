@@ -22,4 +22,5 @@ class Cycle:
             length += distance_matrix[prec_node_id][curr_node_id]
             prec_node_id = curr_node_id
 
+
         return length

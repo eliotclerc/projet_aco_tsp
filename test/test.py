@@ -1,6 +1,8 @@
 from src.model.graph import Graph
-from src.model.aco import aco
+from src.model.aco import AcoModel
 
+
+#TODO print pheromone matrix to be sure that it works (vérifier convergence)
 def main():
     RESET = "\033[0m"
     RED   = "\033[31m"
@@ -9,8 +11,9 @@ def main():
 
     alpha = 1
     beta = 3
-    nb_step = 100
-    nb_ant = 10
+    nb_step = 300
+    nb_ant = 150
+    evaporation = 0.1
 
     tested_graph_name = []
     tested_graph = []
@@ -70,9 +73,30 @@ def main():
     tested_graph.append(graph)
     expected_result.append(test_shortest_path)
 
+    # ------ Test 6 (ulysses22) -----
+    graph_name = "test/graph/ulysses22.csv"
+    graph = Graph(graph_name)
+    test_shortest_path = 7013
+
+    tested_graph_name.append(graph_name)
+    tested_graph.append(graph)
+    expected_result.append(test_shortest_path)
+
+    # ------ Test 6 (berlin52) -----
+    graph_name = "test/graph/berlin52.csv"
+    graph = Graph(graph_name)
+    test_shortest_path = 7542
+
+    tested_graph_name.append(graph_name)
+    tested_graph.append(graph)
+    expected_result.append(test_shortest_path)
+
+
     sucess = 0
     for i, graph in enumerate(tested_graph):
-        _, result = aco(graph, nb_step, nb_ant, alpha, beta)
+        acoTest = AcoModel(graph, len(graph.distance), alpha, beta, evaporation)
+        acoTest.run(nb_step)
+        result = acoTest.shortest_cycle_len
 
         print(f"Graph {BOLD}{tested_graph_name[i]}{RESET} tested")
 
@@ -91,4 +115,5 @@ def main():
     print(f"Fail : {len(tested_graph_name) - sucess}")
     print(f"{sucess}/{len(tested_graph_name)}")
     print("-------------------------")
+
 main()

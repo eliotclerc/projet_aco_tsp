@@ -1,42 +1,53 @@
+from random import randint
+
 from src.model.ant import Ant
 from src.model.graph import Graph
 
-from random import randint
-
 def create_ants(nb_ants, graph_nb_node):
-    #create ants at random starting position
-    return [Ant(randint(0, graph_nb_node - 1), graph_nb_node) for i in range(graph_nb_node)]
+    #create ants at the first node
+    return [Ant(randint(0, graph_nb_node - 1), graph_nb_node) for i in range(nb_ants)]
 
-def aco(graph : Graph, nb_step, nb_ant, alpha, beta):
-    pheromone = graph.pheromone
-    distance = graph.distance
-    graph_nb_node = len(distance[0])
-    ants = create_ants(nb_ant, graph_nb_node)
-    
-    shortest_cycle_len = float('inf')
-    shortest_cycle = None
+class AcoModel:
+    def __init__(self, graph: Graph, nb_ant, alpha, beta, evaporation):
+        self.graph = graph
+        self.nb_ant = nb_ant
+        self.alpha = alpha
+        self.beta = beta
+        self.evaporation = evaporation
 
-    for step in range(nb_step):
+        self.graph_nb_node = len(graph.distance[0])
+        self.ants = create_ants(nb_ant, self.graph_nb_node)
 
-        #create ants cycle
-        for cycle_node_id in range(graph_nb_node - 1):
-            for ant in ants:
-                ant.go_to(graph, alpha, beta)
+        self.current_step = 0
+        self.shortest_cycle_len = float('inf')
+        self.shortest_cycle = None
 
-        #once the cycle is created
+    def step(self):
+        graph = self.graph
 
-        # pheromone deposit & reset tours
-        for ant in ants:
+        # ant making their cycle
+        for _ in range(self.graph_nb_node - 1):
+            for ant in self.ants:
+                ant.go_to(graph, self.alpha, self.beta)
+
+        # pheromone deposit 
+        for ant in self.ants:
             ant.pheromone_deposit(graph)
 
-            # keep the shortest cycle if found
-            ant_cycle_length = ant.current_cycle.compute_distance(graph.distance)
-            if(ant_cycle_length < shortest_cycle_len):
-                shortest_cycle_len = ant_cycle_length
-                shortest_cycle = ant.current_cycle.cycle_node_ids.copy()
+            # if shortest path found
+            current_cycle = ant.current_cycle
+            ant_cycle_length = current_cycle.compute_distance(graph.distance)
+            if ant_cycle_length < self.shortest_cycle_len:
+                self.shortest_cycle_len = ant_cycle_length
+                self.shortest_cycle = current_cycle.cycle_node_ids.copy()
 
-            # reset cycle before next iteration
             ant.reset_cycle()
-    
-    return shortest_cycle, shortest_cycle_len
 
+        # pheromone evaporation
+        self.graph.pheromone.evaporate(self.evaporation)
+
+        self.current_step += 1
+
+    def run(self, nb_step):
+        for _ in range(nb_step):
+            self.step()

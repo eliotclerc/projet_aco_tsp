@@ -15,8 +15,12 @@ class PheromoneMatrix:
     def __init__(self, nb_node):
         shape = (nb_node, nb_node)
 
-        #create a nb_node * nb_node matrix full of 0
+        #create a nb_node * nb_node matrix with initial pheromone
         self.pheromone_quantity = zeros(shape = shape, dtype = float)
+        
+        # Initialize with small positive pheromone to encourage exploration
+        initial_pheromone = 1.0 / nb_node
+        self.pheromone_quantity[:] = initial_pheromone
 
     def evaporate(self, rho):
         """
@@ -31,9 +35,7 @@ class PheromoneMatrix:
         Returns:
             Nothing
         """
-        #iterate over all elements efficiently
-        for pheromone in nditer(self.pheromone_quantity):
-            pheromone *= (1 - rho)
+        self.pheromone_quantity *= (1 - rho)
 
     def display(self):
         """

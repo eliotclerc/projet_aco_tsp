@@ -7,15 +7,22 @@ from random import randint
 
 #choose uniformely if all weight are 0
 def safe_choices(population, weights=None, *, k=1):
+    if len(population) == 1:
+        result = [population[0]]
+        return result[0] if k == 1 else result
+    
+    if weights is None:
+        result = choices(population, k=k)
+        return result[0] if k == 1 else result
+    
     total = sum(weights)
     
-    if len(population) == 1:
-        return population[0]
+    if total == 0:
+        result = choices(population, k=k)
+        return result[0] if k == 1 else result
 
-    if weights is None or total == 0:
-        return choices(population, k=k)
-
-    return choices(population, weights=weights, k=k)
+    result = choices(population, weights=weights, k=k)
+    return result[0] if k == 1 else result
 
 
 class Ant:
