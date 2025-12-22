@@ -34,9 +34,6 @@ class Main_frame(tk.ttk.Frame):
         self.anim_id = 0
 
 
-
-
-
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
         super().__init__(container)
         options = {'padx': 5, 'pady': 5}
@@ -325,5 +322,6 @@ class Main_frame(tk.ttk.Frame):
         self.step_slider.config(state="disabled", to=0)
         self.step_slider.set(0)
         self.anim_id += 1
+        
 
 

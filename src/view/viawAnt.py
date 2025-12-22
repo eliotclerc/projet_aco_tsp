@@ -22,5 +22,5 @@ class viewAnt :
         :param self: Description
         """
 
-        return [(700,100),(100,500),(700,500)]
+        return None
         
