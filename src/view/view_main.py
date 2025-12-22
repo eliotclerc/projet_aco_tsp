@@ -36,6 +36,7 @@ if __name__ == "__main__":
     frame = Main_frame(app,warehouses=whs,ants = ants_list,edges=edge_screen)
     frame.init_container_on_canva()
     frame.spawn_ants()
+    frame.save_initial_state()
 
     path_pairs = frame.ants[0].update()
     print(path_pairs)
@@ -45,12 +46,15 @@ if __name__ == "__main__":
         if frame.play and not frame.animating:
             frame.play = False
             frame.animating = True
+            frame.anim_id += 1
+            current_anim = frame.anim_id
 
-            frame.move_ants(frame.ants[0], path_pairs[0][0], path_pairs[0][1])
-            frame.move_ants(frame.ants[0], path_pairs[1][0], path_pairs[1][1])
 
-            frame.move_ants(frame.ants[1], path_pairs[1][0], path_pairs[1][1])
-            frame.move_ants(frame.ants[1], path_pairs[2][0], path_pairs[2][1])
+            frame.move_ants(frame.ants[0], path_pairs[0][0], path_pairs[0][1],anim_id=current_anim)
+            frame.move_ants(frame.ants[0], path_pairs[1][0], path_pairs[1][1],anim_id=current_anim)
+
+            frame.move_ants(frame.ants[1], path_pairs[1][0], path_pairs[1][1],anim_id=current_anim)
+            frame.move_ants(frame.ants[1], path_pairs[2][0], path_pairs[2][1],anim_id=current_anim)
 
         app.after(50, check_start)
 
@@ -58,6 +62,6 @@ if __name__ == "__main__":
     check_start()
     app.mainloop()
 
-    
+
 
 

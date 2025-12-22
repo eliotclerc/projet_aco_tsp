@@ -31,6 +31,8 @@ class Main_frame(tk.ttk.Frame):
         self.timeline = []
         self.mode = "live"
         self.pixel_counter = 0
+        self.anim_id = 0
+
 
 
 
@@ -84,10 +86,12 @@ class Main_frame(tk.ttk.Frame):
         self.stop_button = tk.ttk.Button(btn_frame, text="⏹️ Stop",command = self.stop).grid(row=0, column=1, padx=2)
 
         #reset button 
-        tk.ttk.Button(left, text="Reset", command=self.set).grid(row=5, column=0, sticky="EW", pady=5)
+        self.reset_button = tk.ttk.Button(left, text="Reset", command=self.reset)
+        self.reset_button.grid(row=5, column=0, sticky="EW", pady=5)
+
 
         #save button
-        tk.ttk.Button(left, text="Save", command=self.set).grid(row=6, column=0, sticky="EW", pady=5)
+        self.save_button = tk.ttk.Button(left, text="Save", command=None).grid(row=6, column=0, sticky="EW", pady=5)
 
 
         #Adding the canva : 
@@ -111,8 +115,8 @@ class Main_frame(tk.ttk.Frame):
             self.heatbar.create_rectangle(0, y0, 30, y1,fill=color,outline="")
 
         #Create labels min / max
-        self.heatbar.create_text(35, h-10, text="max", anchor="w")
-        self.heatbar.create_text(35, 10, text="min", anchor="w")
+        self.heatbar.create_text(35, h-10, text="min", anchor="w")
+        self.heatbar.create_text(35, 10, text="max", anchor="w")
 
 
         #Adding the step slider
@@ -141,6 +145,7 @@ class Main_frame(tk.ttk.Frame):
 
         else : 
             self.play = True
+            #self.animating = True
             self.mode = "live"
             self.timeline.clear()
             self.step_slider.config(state="disabled")
@@ -149,8 +154,6 @@ class Main_frame(tk.ttk.Frame):
         if self.animating:
             self.paused = True
 
-                
-        
 
     def init_container_on_canva(self) : 
         """
@@ -186,36 +189,48 @@ class Main_frame(tk.ttk.Frame):
         """
         for i in self.edges : 
             i.update()
-            self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=5)
+            self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=4)
 
 
-    def move_ants(self, ant, x_target, y_target, speed=2):
+    def move_ants(self, ant, x_target, y_target, speed=2,anim_id = None):
 
-        ant.move_queue.append((x_target, y_target, speed))
+        ant.move_queue.append((x_target, y_target, speed,anim_id))
         if ant.is_moving:
             return 
 
         self._start_next_move(ant)
 
+    
     def _start_next_move(self, ant):
+        
         
         if not ant.move_queue:
             ant.is_moving = False
 
             if all(not a.is_moving for a in self.ants):
+
+                if self.mode == "live":
+                    self.update_colors()
+                    self.save_state()
                 self.animating = False
                 self.paused = False
                 self.mode = "replay"
-                self.update_colors()
+
+                
+           
                 self.step_slider.config(to=len(self.timeline) - 1,state="normal")
                 self.step_slider.set(len(self.timeline) - 1)
 
             return
 
         ant.is_moving = True
-        x_target, y_target, speed = ant.move_queue.popleft()
+        x_target, y_target, speed, anim_id = ant.move_queue.popleft()
 
         def step():
+
+            if anim_id != self.anim_id:
+                return
+            
             if self.paused:
                 self.canvas1.after(50, step)
                 return
@@ -230,6 +245,7 @@ class Main_frame(tk.ttk.Frame):
                 ant.screenY = y_target
                 ant.is_moving = False
                 if self.mode == "live":
+                 
                     self.save_state()
                 self._start_next_move(ant)
                 return
@@ -246,6 +262,8 @@ class Main_frame(tk.ttk.Frame):
                 if self.pixel_counter % 5 == 0:
                     self.save_state()
             self.canvas1.after(10, step)
+
+            
 
         step()
 
@@ -269,9 +287,43 @@ class Main_frame(tk.ttk.Frame):
        
         for edge, coeff in zip(self.edges, state["edges"]):
             self.canvas1.itemconfig(edge.canvas_id,fill=self.colors[coeff])
-
+        
 
     def on_slider(self, value):
         if self.mode != "replay":
             return
         self.render_step(int(value))
+
+
+    def save_initial_state(self):
+        self.initial_state = {"ants": [(a.screenX, a.screenY) for a in self.ants],"edges": [e.pheromon_coeff for e in self.edges]}
+
+    def reset(self):
+       
+        self.play = False
+        self.animating = False
+        self.paused = False
+        self.mode = "live"
+
+        for ant in self.ants:
+            ant.move_queue.clear()
+            ant.is_moving = False      
+        self.timeline.clear()
+        self.pixel_counter = 0
+
+
+        for ant, (x, y) in zip(self.ants, self.initial_state["ants"]):
+            self.canvas1.coords(ant.canvas_id, x-5, y-5, x+5, y+5)
+            ant.screenX = x
+            ant.screenY = y
+
+        for edge in self.edges:
+            edge.pheromon_coeff = 0
+            self.canvas1.itemconfig(edge.canvas_id, fill=self.colors[0])
+
+    
+        self.step_slider.config(state="disabled", to=0)
+        self.step_slider.set(0)
+        self.anim_id += 1
+
+
