@@ -29,6 +29,9 @@ if __name__ == "__main__":
     frame.init_container_on_canva()
     frame.spawn_ants()
     frame.save_initial_state()
+    
+
+    """
     path = [(700,100),(100,500),(700,500)]
 
    
@@ -49,6 +52,8 @@ if __name__ == "__main__":
 
 
     check_start()
+
+    """
     app.mainloop()
 
 
