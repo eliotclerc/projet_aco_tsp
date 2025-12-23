@@ -14,6 +14,8 @@ edge_screen = []
 vA1 = viewAnt(100,100)
 vA2 = viewAnt(700,100)
 ants_list = [vA1,vA2]
+
+
 for i in whs : 
     for j in range(0, len(whs)):
         if (j <= whs.index(i)) : 
@@ -54,6 +56,7 @@ if __name__ == "__main__":
     check_start()
 
     """
+    
     app.mainloop()
 
 
