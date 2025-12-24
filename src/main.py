@@ -5,25 +5,13 @@ from view.Main_frame import Main_frame
 from view.viewWarehouse import viewWarehouse
 from view.viawAnt import viewAnt
 from view.viewEdge import viewEdge
+from view.view_main import lists_from_view_model_to_view
 
 
 
 def main():
-
-    whs = [viewWarehouse(100, 100),viewWarehouse(700, 100),viewWarehouse(100, 500),viewWarehouse(700, 500)]
-    edge_screen = []
-    vA1 = viewAnt(100,100)
-    vA2 = viewAnt(700,100)
-    ants_list = [vA1,vA2]
-
-    for i in whs : 
-        for j in range(0, len(whs)):
-            if (j <= whs.index(i)) : 
-                continue 
-            else : 
-                edge_screen.append(viewEdge(i,whs[j]))
-
-
+    
+    whs,ants_list,edge_screen = lists_from_view_model_to_view()
     app = Frame_app()
     frame = Main_frame(app,warehouses=whs,ants = ants_list,edges=edge_screen)
     frame.init_container_on_canva()

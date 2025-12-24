@@ -1,39 +1,52 @@
 import tkinter as tk
 from tkinter import ttk
-from Frame_app import Frame_app
-from Main_frame import Main_frame
-from viewWarehouse import viewWarehouse
-from viawAnt import viewAnt
-from viewEdge import viewEdge
+from .Frame_app import Frame_app
+from .Main_frame import Main_frame
+from .viewWarehouse import viewWarehouse
+from .viawAnt import viewAnt
+from .viewEdge import viewEdge
 
 
-#------------------Déclaration des listes nécessaires pour initialiser la windows-----------------------
-########################################################################################################
-whs = [viewWarehouse(100, 100),viewWarehouse(700, 100),viewWarehouse(100, 500),viewWarehouse(700, 500)]
-edge_screen = []
-vA1 = viewAnt(100,100)
-vA2 = viewAnt(700,100)
-ants_list = [vA1,vA2]
+
+def lists_from_view_model_to_view(whs_vm = [],ants_vm = []) : 
+   
+    whs = [viewWarehouse(100, 100),viewWarehouse(700, 100),viewWarehouse(100, 500),viewWarehouse(700, 500)]
+    edge_screen = []
+    vA1 = viewAnt(100,100)
+    vA2 = viewAnt(700,100)
+    ants_list = [vA1,vA2]
 
 
-for i in whs : 
-    for j in range(0, len(whs)):
-        if (j <= whs.index(i)) : 
-            continue 
-        else : 
-            edge_screen.append(viewEdge(i,whs[j]))
-########################################################################################################
+    for i in whs : 
+        for j in range(0, len(whs)):
+            if (j <= whs.index(i)) : 
+                continue 
+            else : 
+                edge_screen.append(viewEdge(i,whs[j]))
+    """
+    for i, wh in enumerate(whs):
+        for j in range(0, i + 1):
+            edge_screen.append(viewEdge(wh, whs[j]))
 
+    print(len(edge_screen))
+
+    #A corriger si on veut utiliser celui-la, il créer des edges en trop
+    """
+
+    return whs,ants_list,edge_screen
+  
+
+a,b,c = lists_from_view_model_to_view()
 
 if __name__ == "__main__":
     app = Frame_app()       
-    frame = Main_frame(app,warehouses=whs,ants = ants_list,edges=edge_screen)
+    frame = Main_frame(app,warehouses=a,ants = b,edges=c)
     frame.init_container_on_canva()
     frame.spawn_ants()
     frame.save_initial_state()
     
 
-    """
+  
     path = [(700,100),(100,500),(700,500)]
 
    
@@ -55,8 +68,8 @@ if __name__ == "__main__":
 
     check_start()
 
-    """
-    
+   
+
     app.mainloop()
 
 
