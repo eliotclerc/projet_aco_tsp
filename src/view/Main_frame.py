@@ -4,7 +4,7 @@ from math import sqrt
 
 class Main_frame(tk.ttk.Frame):
 
-    def __init__(self, container,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = []):
+    def __init__(self, container,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[]):
         """
         Initializes the tkinter window, creates all of the buttons and the canva, defines the methods to 
         make the animations
@@ -32,6 +32,7 @@ class Main_frame(tk.ttk.Frame):
         self.mode = "live"
         self.pixel_counter = 0
         self.anim_id = 0
+        self.edges_id = edges_id
 
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
@@ -122,7 +123,9 @@ class Main_frame(tk.ttk.Frame):
         self.step_slider.grid(row=2, column=2, sticky="EW", padx=110, pady=5)
 
 
-        
+    
+
+
     def set(self):
         """  Handle set button click event
         """        
