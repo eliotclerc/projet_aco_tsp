@@ -21,10 +21,7 @@ class ViewModelAnt:
 
     def get_current_node_ids(self) -> List[int]:
         """Node ids where ants are currently located."""
-        node_ids: List[int] = []
-        for ant in self.ants:
-            node_ids.append(int(ant.get_current_node_id()))
-        return node_ids
+        return [int(ant.current_cycle.cycle_node_ids[-1]) for ant in self.ants]
 
     def get_positions(self) -> List[Tuple[int, int]]:
         """Screen positions matching ants' current nodes."""

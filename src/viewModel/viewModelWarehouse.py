@@ -1,4 +1,3 @@
-import random
 from typing import List, Tuple
 
 from src.model.graph import Graph
@@ -16,41 +15,17 @@ class ViewModelWarehouse:
     def __init__(
         self,
         graph: Graph,
-        positions: List[Tuple[int, int]] | None = None,
-        center: Tuple[int, int] = (600, 400),
-        radius: int = 300,
+        positions: List[Tuple[int, int]],
     ):
         self.graph = graph
         self.nb_warehouses = len(graph.distance)
 
-        # If no positions are provided, scatter nodes randomly within the bounding square.
-        self.positions: List[Tuple[int, int]] = positions or self._build_random_layout(
-            count=self.nb_warehouses, center=center, radius=radius
-        )
-
-        if len(self.positions) != self.nb_warehouses:
+        if len(positions) != self.nb_warehouses:
             raise ValueError(
                 "Provided positions must match the number of graph nodes"
             )
-
-    @staticmethod
-    def _build_random_layout(
-        count: int, center: Tuple[int, int], radius: int
-    ) -> List[Tuple[int, int]]:
-        """
-        Scatter nodes randomly inside a square centered on `center` with side
-        length `2 * radius`.
-        """
-        if count == 0:
-            return []
-
-        cx, cy = center
-        positions: List[Tuple[int, int]] = []
-        for _ in range(count):
-            x = random.randint(cx - radius, cx + radius)
-            y = random.randint(cy - radius, cy + radius)
-            positions.append((x, y))
-        return positions
+        
+        self.positions: List[Tuple[int, int]] = positions
 
     def get_count(self) -> int:
         """Total number of warehouses (nodes)."""
@@ -58,7 +33,7 @@ class ViewModelWarehouse:
 
     def get_positions(self) -> List[Tuple[int, int]]:
         """List of all warehouse positions (x, y)."""
-        return list(self.positions)
+        return list[Tuple[int, int]](self.positions)
 
     def get_position(self, warehouse_id: int) -> Tuple[int, int]:
         """Position (x, y) for the requested warehouse id."""

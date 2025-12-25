@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 import numpy as np
 
 from src.model.graph import Graph
@@ -20,15 +18,6 @@ class ViewModelEdge:
     def get_all_pheromones(self) -> np.ndarray:
         """Complete pheromone matrix (copy)."""
         return self.graph.pheromone.pheromone_quantity.copy()
-
-    def get_symmetric_edges(self) -> List[Tuple[int, int, float]]:
-        """Return (i, j, tau_ij) pairs for i < j."""
-        matrix = self.graph.pheromone.pheromone_quantity
-        edges: List[Tuple[int, int, float]] = []
-        for i in range(matrix.shape[0]):
-            for j in range(i + 1, matrix.shape[1]):
-                edges.append((i, j, float(matrix[i][j])))
-        return edges
 
     def get_normalized(self) -> np.ndarray:
         """
