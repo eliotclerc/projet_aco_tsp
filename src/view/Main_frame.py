@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import font
 from math import sqrt
+from view.viawAnt import viewAnt
 
 class Main_frame(tk.ttk.Frame):
 
@@ -122,10 +123,8 @@ class Main_frame(tk.ttk.Frame):
         self.step_slider = tk.Scale(self,from_=0,to=0,orient="horizontal",command=self.on_slider,state="disabled")
         self.step_slider.grid(row=2, column=2, sticky="EW", padx=110, pady=5)
 
-
+        
     
-
-
     def set(self):
         """  Handle set button click event
         """        
@@ -161,9 +160,11 @@ class Main_frame(tk.ttk.Frame):
         
         :param self: 
         """
-        
+        id = 0
         for i in self.warehouses : 
-            self.canvas1.create_oval(i.screenX - i.r, i.screenY - i.r,i.screenX + i.r, i.screenY + i.r,fill="",outline="red",width=3)
+            i.idWarehouse = id
+            self.canvas1.create_oval(i.screenX - i.r, i.screenY - i.r,i.screenX + i.r, i.screenY + i.r,fill="",outline=self.colors[i.idWarehouse],width=3)         
+            id +=5
         
         for i in self.edges : 
             i.canvas_id = self.canvas1.create_line(i.warehouse1.screenX, i.warehouse1.screenY, i.warehouse2.screenX, i.warehouse2.screenY, fill=self.colors[i.pheromon_coeff], width=4)
@@ -175,8 +176,23 @@ class Main_frame(tk.ttk.Frame):
 
         :param self:
         """
-        for ant in self.ants:
-            ant.canvas_id = self.canvas1.create_oval(ant.screenX - 5, ant.screenY - 5,ant.screenX + 5, ant.screenY + 5,fill="blue")
+        
+        for ant in self.ants.ants:
+            wh_id = ant.current_cycle.cycle_node_ids[-1]          
+            warehouse = self.warehouses[wh_id]
+
+            ant.screenX = warehouse.screenX
+            ant.screenY = warehouse.screenY
+
+            ant.canvas_id = self.canvas1.create_oval(
+                ant.screenX - 5,
+                ant.screenY - 5,
+                ant.screenX + 5,
+                ant.screenY + 5,
+                fill="blue"
+            )
+            
+            
 
 
 
@@ -192,11 +208,17 @@ class Main_frame(tk.ttk.Frame):
             self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=4)
 
 
-    def move_ants(self, ant, x_target, y_target, speed=2,anim_id = None):
+    def move_ants(self, ant, warehouse_id, speed=2,anim_id = None):
 
-        ant.move_queue.append((x_target, y_target, speed,anim_id))
+        warehouse = self.warehouses[warehouse_id]
+
+        x_target = warehouse.screenX
+        y_target = warehouse.screenY
+
+        ant.move_queue.append((x_target, y_target, speed, anim_id))
+
         if ant.is_moving:
-            return 
+            return
 
         self._start_next_move(ant)
 
@@ -216,8 +238,6 @@ class Main_frame(tk.ttk.Frame):
                 self.paused = False
                 self.mode = "replay"
 
-                
-           
                 self.step_slider.config(to=len(self.timeline) - 1,state="normal")
                 self.step_slider.set(len(self.timeline) - 1)
 
@@ -296,7 +316,7 @@ class Main_frame(tk.ttk.Frame):
 
 
     def save_initial_state(self):
-        self.initial_state = {"ants": [(a.screenX, a.screenY) for a in self.ants],"edges": [e.pheromon_coeff for e in self.edges]}
+        self.initial_state = {"ants": [(a.screenX, a.screenY) for a in self.ants.ants],"edges": [e.pheromon_coeff for e in self.edges]}
 
     def reset(self):
        

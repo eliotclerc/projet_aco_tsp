@@ -10,7 +10,7 @@ from .viewEdge import viewEdge
 
 def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) : 
    
-    #whs = [viewWarehouse(100, 100),viewWarehouse(700, 100),viewWarehouse(100, 500),viewWarehouse(700, 500)]
+    
     lmx = [x for x, y in whs_vm]
     lmy = [y for x, y in whs_vm]
 
@@ -21,14 +21,23 @@ def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) :
     margin = 50
 
     mapped_whs_pos = [(margin + ((x - min_x) / (max_x - min_x)) * (canvas_w - 2 * margin),margin + ((y - min_y) / (max_y - min_y)) * (canvas_h - 2 * margin)) for (x,y) in whs_vm]
-    
-
     whs = [viewWarehouse(a,b) for (a,b) in mapped_whs_pos]
+
+    """
+    lax = [x for x, y in ants_vm]
+    lay = [y for x, y in ants_vm]
+
+    min_x, max_x = min(lax), max(lax)
+    min_y, max_y = min(lay), max(lay)
+    canvas_w = int(0.6 * screen_geom[0])
+    canvas_h = int(0.8 * screen_geom[1])
+
+    mapped_ant_start_pos = [(margin + ((x - min_x) / (max_x - min_x)) * (canvas_w - 2 * margin),margin + ((y - min_y) / (max_y - min_y)) * (canvas_h - 2 * margin)) for (x,y) in ants_vm]
+    ants = [viewAnt(a,b) for (a,b) in mapped_ant_start_pos]
+    """
+
     edge_screen = []
-    vA1 = viewAnt(100,100)
-    vA2 = viewAnt(700,100)
-    ants_list = [vA1,vA2]
-    edge_id = []
+    #edge_id = []
 
     for i in whs : 
         for j in range(0, len(whs)):
@@ -36,7 +45,7 @@ def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) :
                 continue 
             else : 
                 edge_screen.append(viewEdge(i,whs[j]))
-                edge_id.append((whs.index(i),j))
+                #edge_id.append((whs.index(i),j))
 
 
     
@@ -47,10 +56,10 @@ def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) :
 
     print(len(edge_screen))
 
-    #A corriger si on veut utiliser celui-la, il créer des edges en trop
+    #A corriger si on veut utiliser celui-la, il crée des edges en trop
     """
 
-    return whs,ants_list,edge_screen,edge_id
+    return whs,edge_screen
   
 
 #a,b,c = lists_from_view_model_to_view()

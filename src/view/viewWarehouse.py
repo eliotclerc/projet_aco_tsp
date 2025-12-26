@@ -15,8 +15,8 @@ class viewWarehouse :
         self.idWarehouse = idWarehouse
         self.r = 25
 
-    def getIdWarehouse(): 
-        return None
+    def getIdWarehouse(self): 
+        return self.idWarehouse
 
 
  
