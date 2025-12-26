@@ -20,11 +20,11 @@ class Main_frame(tk.ttk.Frame):
         """
         self.colors = ["#0d133d","#141c5a","#1a237e","#1f2e8a","#283593","#2f3fa0","#1565c0","#1976d2","#1e88e5","#2196f3","#0288d1","#039be5","#26c6da","#4dd0e1","#4db6ac","#66bb6a","#81c784","#9ccc65","#aed581","#cddc39","#d4e157","#ffeb3b","#fbc02d","#f9a825","#f57f17","#ef6c00","#e65100"]
 
-
         self.warehouses = warehouses
         self.nb_ants = nb_ants
         self.nb_wh = nb_wh
-        self.ants= ants
+        self.model_ants = ants.ants if hasattr(ants, 'ants') else ants
+        self.view_ants = [viewAnt(0, 0) for _ in self.model_ants]
         self.edges = edges
         self.play = False
         self.animating = False
@@ -177,18 +177,18 @@ class Main_frame(tk.ttk.Frame):
         :param self:
         """
         
-        for ant in self.ants.ants:
-            wh_id = ant.current_cycle.cycle_node_ids[-1]          
+        for i, model_ant in enumerate(self.model_ants):
+            wh_id = model_ant.current_cycle.cycle_node_ids[-1]          
             warehouse = self.warehouses[wh_id]
 
-            ant.screenX = warehouse.screenX
-            ant.screenY = warehouse.screenY
+            self.view_ants[i].screenX = warehouse.screenX
+            self.view_ants[i].screenY = warehouse.screenY
 
-            ant.canvas_id = self.canvas1.create_oval(
-                ant.screenX - 5,
-                ant.screenY - 5,
-                ant.screenX + 5,
-                ant.screenY + 5,
+            self.view_ants[i].canvas_id = self.canvas1.create_oval(
+                self.view_ants[i].screenX - 5,
+                self.view_ants[i].screenY - 5,
+                self.view_ants[i].screenX + 5,
+                self.view_ants[i].screenY + 5,
                 fill="blue"
             )
             
@@ -208,19 +208,19 @@ class Main_frame(tk.ttk.Frame):
             self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=4)
 
 
-    def move_ants(self, ant, warehouse_id, speed=2,anim_id = None):
+    def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
         warehouse = self.warehouses[warehouse_id]
 
         x_target = warehouse.screenX
         y_target = warehouse.screenY
 
-        ant.move_queue.append((x_target, y_target, speed, anim_id))
+        view_ant.move_queue.append((x_target, y_target, speed, anim_id))
 
-        if ant.is_moving:
+        if view_ant.is_moving:
             return
 
-        self._start_next_move(ant)
+        self._start_next_move(view_ant)
 
     
     def _start_next_move(self, ant):
@@ -229,7 +229,7 @@ class Main_frame(tk.ttk.Frame):
         if not ant.move_queue:
             ant.is_moving = False
 
-            if all(not a.is_moving for a in self.ants):
+            if all(not a.is_moving for a in self.view_ants):
 
                 if self.mode == "live":
                     self.update_colors()
@@ -293,13 +293,13 @@ class Main_frame(tk.ttk.Frame):
         coefficients
         :param self: 
         """
-        self.timeline.append({"ants": [(a.screenX, a.screenY) for a in self.ants],"edges": [e.pheromon_coeff for e in self.edges]})
+        self.timeline.append({"ants": [(a.screenX, a.screenY) for a in self.view_ants],"edges": [e.pheromon_coeff for e in self.edges]})
 
 
     def render_step(self, idx):
         state = self.timeline[idx]
 
-        for ant, (x, y) in zip(self.ants, state["ants"]):
+        for ant, (x, y) in zip(self.view_ants, state["ants"]):
             self.canvas1.coords(ant.canvas_id,x-5, y-5, x+5, y+5)
             ant.screenX = x
             ant.screenY = y
@@ -316,7 +316,7 @@ class Main_frame(tk.ttk.Frame):
 
 
     def save_initial_state(self):
-        self.initial_state = {"ants": [(a.screenX, a.screenY) for a in self.ants.ants],"edges": [e.pheromon_coeff for e in self.edges]}
+        self.initial_state = {"ants": [(a.screenX, a.screenY) for a in self.view_ants],"edges": [e.pheromon_coeff for e in self.edges]}
 
     def reset(self):
        
@@ -325,14 +325,14 @@ class Main_frame(tk.ttk.Frame):
         self.paused = False
         self.mode = "live"
 
-        for ant in self.ants:
+        for ant in self.view_ants:
             ant.move_queue.clear()
             ant.is_moving = False      
         self.timeline.clear()
         self.pixel_counter = 0
 
 
-        for ant, (x, y) in zip(self.ants, self.initial_state["ants"]):
+        for ant, (x, y) in zip(self.view_ants, self.initial_state["ants"]):
             self.canvas1.coords(ant.canvas_id, x-5, y-5, x+5, y+5)
             ant.screenX = x
             ant.screenY = y
