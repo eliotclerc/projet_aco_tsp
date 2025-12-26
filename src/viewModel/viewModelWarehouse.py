@@ -2,7 +2,6 @@ from typing import List, Tuple, Optional
 import numpy as np
 
 from src.model.graph import Graph
-from sklearn.manifold import MDS
 
 
 class ViewModelWarehouse:
@@ -24,7 +23,7 @@ class ViewModelWarehouse:
         self.nb_warehouses = len(graph.distance)
 
         positions = self._generate_positions_from_distances(graph.distance)
-        self.positions: List[Tuple[int, int]] = positions
+        self.positions: List[Tuple[float, float]] = positions
 
     def get_count(self) -> int:
         """Total number of warehouses (nodes)."""
@@ -34,53 +33,48 @@ class ViewModelWarehouse:
         """List of all warehouse positions (x, y)."""
         return list(self.positions)
 
-    def get_position(self, warehouse_id: int) -> Tuple[int, int]:
+    def get_position(self, warehouse_id: int) -> Tuple[float, float]:
         """Position (x, y) for the requested warehouse id."""
         return self.positions[warehouse_id]
 
-    def _generate_positions_from_distances(self, distance_matrix) -> List[Tuple[int, int]]:
+    def _generate_positions_from_distances(self, distance_matrix) -> List[Tuple[float, float]]:
         n = len(distance_matrix)
         if n == 0:
             return []
         
         if n == 1:
-            return self._normalize_to_square([(0.0, 0.0)])
+            return [(0.0, 0.0)]
         
         if not isinstance(distance_matrix, np.ndarray):
-            D = np.array(distance_matrix)
+            D = np.array(distance_matrix, dtype=float)
         else:
-            D = distance_matrix
+            D = distance_matrix.astype(float)
+     
+        D_squared = D ** 2
         
-        mds = MDS(
-            n_components=2,
-            dissimilarity='precomputed',
-            random_state=42
-        )
-        positions_2d = mds.fit_transform(D)
+        row_means = np.mean(D_squared, axis=1, keepdims=True)
+        col_means = np.mean(D_squared, axis=0, keepdims=True)
+        grand_mean = np.mean(D_squared)
+        
+        B = -0.5 * (D_squared - row_means - col_means + grand_mean)
+        
+        eigenvalues, eigenvectors = np.linalg.eigh(B)
+        
+        idx = np.argsort(eigenvalues)[::-1]
+        eigenvalues = eigenvalues[idx]
+        eigenvectors = eigenvectors[:, idx]
+        
+        positive_idx = eigenvalues > 0
+        eigenvalues_2d = eigenvalues[positive_idx][:2]
+        eigenvectors_2d = eigenvectors[:, positive_idx][:, :2]
+        
+        positions_2d = eigenvectors_2d * np.sqrt(np.maximum(eigenvalues_2d, 0))
+        
+        if positions_2d.shape[1] < 2:
+            padding = np.zeros((n, 2 - positions_2d.shape[1]))
+            positions_2d = np.hstack([positions_2d, padding])
         
         positions = [(float(x), float(y)) for x, y in positions_2d]
         
-        return self._normalize_to_square(positions)
-    
-    def _normalize_to_square(self, positions: List[Tuple[float, float]]) -> List[Tuple[int, int]]:
-        if not positions:
-            return []
-        
-        xs, ys = zip(*positions)
-        min_x, max_x = min(xs), max(xs)
-        min_y, max_y = min(ys), max(ys)
-        
-        span_x = max_x - min_x if max_x != min_x else 1
-        span_y = max_y - min_y if max_y != min_y else 1
-        
-        square_size = 800
-        scale = min(square_size / span_x, square_size / span_y) if span_x > 0 and span_y > 0 else 1
-        
-        offset_x = (1000 - (max_x - min_x) * scale) / 2 - min_x * scale
-        offset_y = (1000 - (max_y - min_y) * scale) / 2 - min_y * scale
-        
-        return [
-            (int(x * scale + offset_x), int(y * scale + offset_y))
-            for x, y in positions
-        ]
+        return positions
 
