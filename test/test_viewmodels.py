@@ -5,17 +5,23 @@ from src.viewModel.viewModelAnt import ViewModelAnt
 from src.viewModel.viewModelEdge import ViewModelEdge
 
 
-def test_viewmodels_expose_domain_data():
-    graph = Graph("test/graph/test_0.csv")
+def test_viewmodels():
+    """Test simple que les ViewModels fonctionnent correctement."""
+    csv_path = "test/graph/test_0.csv"
+    graph = Graph(csv_path)
     node_count = len(graph.distance)
 
-    # Provide fixed positions to avoid randomness during the test.
-    positions = [(i, i + 10) for i in range(node_count)]
-    warehouse_vm = ViewModelWarehouse(graph, positions=positions)
+    warehouse_vm = ViewModelWarehouse(graph, csv_path)
+    positions = warehouse_vm.get_positions()
 
     assert warehouse_vm.get_count() == node_count
-    assert warehouse_vm.get_positions() == positions
+    assert len(positions) == node_count
     assert warehouse_vm.get_position(0) == positions[0]
+    
+    for pos in positions:
+        x, y = pos
+        assert 0 <= x <= 1000
+        assert 0 <= y <= 1000
 
     ants = [Ant(0, node_count), Ant(1, node_count)]
     ants[0].current_target_node_id = 2
@@ -29,5 +35,6 @@ def test_viewmodels_expose_domain_data():
     edge_vm = ViewModelEdge(graph)
     pheromone_val = edge_vm.get_pheromone(0, 1)
     assert isinstance(pheromone_val, float)
+    assert pheromone_val >= 0
 
 

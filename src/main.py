@@ -17,15 +17,16 @@ from model.ant import Ant
 def main():
     
     #create graph
-    graph = Graph("test/graph/test_0.csv")
+    csv_path = "test/graph/test_0.csv"
+    graph = Graph(csv_path)
 
     #create ants
     node_count = len(graph.distance)
     a1 = Ant(0,node_count)
     a2 = Ant(1,node_count)
 
-    #create warehouses
-    vmw = ViewModelWarehouse(graph,radius=25)
+    #create warehouses (positions are automatically loaded from TSP file)
+    vmw = ViewModelWarehouse(graph, csv_path)
 
     #creates edges between those warehouses
     vme = ViewModelEdge(graph)
