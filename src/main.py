@@ -17,41 +17,53 @@ from model.ant import Ant
 def main():
     
     #create graph
-    csv_path = "test/graph/test_0.csv"
-    graph = Graph(csv_path)
+    graph = Graph("test/graph/test_0.csv")
 
     #create ants
     node_count = len(graph.distance)
-    a1 = Ant(0,node_count)
-    a2 = Ant(1,node_count)
+    
 
     #create warehouses (positions are automatically loaded from TSP file)
-    vmw = ViewModelWarehouse(graph, csv_path)
+    vmw = ViewModelWarehouse(graph)
 
     #creates edges between those warehouses
     vme = ViewModelEdge(graph)
-    pheromone_val = vme.get_pheromone(0, 1)
 
     #creates ants
     ants = [Ant(0, node_count), Ant(1, node_count)]
-    ants[0].current_target_node_id = 2
-    ants[1].current_target_node_id = 3
-    vma = ViewModelAnt(ants,warehouse_vm=vmw)
-
-    #print(vma.get_positions())
+    vma = ViewModelAnt(ants = ants,warehouse_vm=vmw)
 
 
 
     #create tkinter app & frame and lists 
     app = Frame_app()
-    whs,ants_list,edge_screen,edge_id = lists_from_view_model_to_view(whs_vm= vmw.get_positions(),screen_geom= app.get_geom())
-    frame = Main_frame(app,warehouses=whs,ants = ants_list,edges=edge_screen)
+    whs,edge_screen = lists_from_view_model_to_view(whs_vm= vmw.get_positions(),screen_geom= app.get_geom())
+    frame = Main_frame(app,warehouses=whs,ants = vma,edges=edge_screen)
 
 
     #act upon windows and lists
     frame.init_container_on_canva()
     frame.spawn_ants()
     frame.save_initial_state()
+
+    current_target = 1
+
+    def check_start():
+        nonlocal current_target
+
+        if frame.play and not frame.animating:
+            frame.play = False
+            frame.animating = True
+            frame.anim_id += 1
+            current_anim = frame.anim_id
+
+            frame.move_ants(frame.view_ants[0],warehouse_id=current_target,anim_id=current_anim)
+            
+            
+        app.after(50, check_start)
+
+
+    check_start()
  
 
 
