@@ -2,10 +2,16 @@ import tkinter as tk
 from tkinter import font
 from math import sqrt
 from view.viawAnt import viewAnt
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
+
+
+
 
 class Main_frame(tk.ttk.Frame):
 
-    def __init__(self, container,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[]):
+    def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[]):
         """
         Initializes the tkinter window, creates all of the buttons and the canva, defines the methods to 
         make the animations
@@ -18,8 +24,7 @@ class Main_frame(tk.ttk.Frame):
         :param ants: instance of viewAnt
         :param edges: instance of viewEdge
         """
-        self.colors = ["#0d133d","#141c5a","#1a237e","#1f2e8a","#283593","#2f3fa0","#1565c0","#1976d2","#1e88e5","#2196f3","#0288d1","#039be5","#26c6da","#4dd0e1","#4db6ac","#66bb6a","#81c784","#9ccc65","#aed581","#cddc39","#d4e157","#ffeb3b","#fbc02d","#f9a825","#f57f17","#ef6c00","#e65100"]
-
+        self.colors = [self.get_hex_color_from_number(i,0,100) for i in range(0,99)]
         self.warehouses = warehouses
         self.nb_ants = nb_ants
         self.nb_wh = nb_wh
@@ -169,7 +174,8 @@ class Main_frame(tk.ttk.Frame):
         for i in self.edges : 
             i.canvas_id = self.canvas1.create_line(i.warehouse1.screenX, i.warehouse1.screenY, i.warehouse2.screenX, i.warehouse2.screenY, fill=self.colors[i.pheromon_coeff], width=4)
         
-
+    
+    
     def spawn_ants(self):
         """
         Creates the ants visually on the canvas
@@ -194,8 +200,6 @@ class Main_frame(tk.ttk.Frame):
             
             
 
-
-
     def update_colors(self):
         """
         Docstring for change_edge_color
@@ -205,7 +209,7 @@ class Main_frame(tk.ttk.Frame):
         """
         for i in self.edges : 
             i.update()
-            self.canvas1.itemconfig(i.canvas_id,fill=self.colors[i.pheromon_coeff],width=4)
+            self.canvas1.itemconfig(i.canvas_id,fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1),width=4)
 
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
@@ -232,12 +236,12 @@ class Main_frame(tk.ttk.Frame):
             if all(not a.is_moving for a in self.view_ants):
 
                 if self.mode == "live":
-                    self.update_colors()
+                    #self.update_colors()
                     self.save_state()
                 self.animating = False
                 self.paused = False
                 self.mode = "replay"
-                self.play = True  # Add this to restart the loop
+                self.play = True 
 
                 self.step_slider.config(to=len(self.timeline) - 1,state="normal")
                 self.step_slider.set(len(self.timeline) - 1)
@@ -266,7 +270,7 @@ class Main_frame(tk.ttk.Frame):
                 ant.screenY = y_target
                 ant.is_moving = False
                 if self.mode == "live":
-                 
+                    self.update_colors()
                     self.save_state()
                 self._start_next_move(ant)
                 return
@@ -347,5 +351,37 @@ class Main_frame(tk.ttk.Frame):
         self.step_slider.set(0)
         self.anim_id += 1
         
+
+    def get_color_from_number(self,value, min_val, max_val):
+        """
+        Maps a number within a specified range to an RGBA color in a blue-to-red gradient.
+
+        Args:
+            value (float): The input number.
+            min_val (float): The minimum value of the range (maps to blue).
+            max_val (float): The maximum value of the range (maps to red).
+
+        Returns:
+            tuple: An RGBA color tuple (floats between 0.0 and 1.0).
+        """
+        # Normalize the value to the range [0, 1]
+        norm = mcolors.Normalize(vmin=min_val, vmax=max_val)
+        # Use the 'coolwarm_r' colormap which goes from red to blue, then reverse it by specifying cmap='coolwarm' in the return statement
+        # The 'coolwarm' colormap goes from blue (low) to red (high)
+        cmap = cm.get_cmap('coolwarm')
+        # Return the RGBA color
+        return cmap(norm(value))
+    
+
+    def get_hex_color_from_number(self,value, min_val, max_val):
+        """
+        Maps a number to a hex color string in a blue-to-red gradient.
+        """
+        rgba_color = self.get_color_from_number(value, min_val, max_val)
+        return mcolors.to_hex(rgba_color)
+
+
+ 
+
 
 

@@ -8,7 +8,7 @@ from .viewEdge import viewEdge
 
 
 
-def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) : 
+def lists_from_view_model_to_view(whs_vm ,vme,screen_geom = []) : 
    
     
     lmx = [x for x, y in whs_vm]
@@ -23,29 +23,17 @@ def lists_from_view_model_to_view(whs_vm ,ants_vm = [],screen_geom = []) :
     mapped_whs_pos = [(margin + ((x - min_x) / (max_x - min_x)) * (canvas_w - 2 * margin),margin + ((y - min_y) / (max_y - min_y)) * (canvas_h - 2 * margin)) for (x,y) in whs_vm]
     whs = [viewWarehouse(a,b) for (a,b) in mapped_whs_pos]
 
-    """
-    lax = [x for x, y in ants_vm]
-    lay = [y for x, y in ants_vm]
-
-    min_x, max_x = min(lax), max(lax)
-    min_y, max_y = min(lay), max(lay)
-    canvas_w = int(0.6 * screen_geom[0])
-    canvas_h = int(0.8 * screen_geom[1])
-
-    mapped_ant_start_pos = [(margin + ((x - min_x) / (max_x - min_x)) * (canvas_w - 2 * margin),margin + ((y - min_y) / (max_y - min_y)) * (canvas_h - 2 * margin)) for (x,y) in ants_vm]
-    ants = [viewAnt(a,b) for (a,b) in mapped_ant_start_pos]
-    """
 
     edge_screen = []
-    #edge_id = []
+    #edge_node_id = []
 
     for i in whs : 
         for j in range(0, len(whs)):
             if (j <= whs.index(i)) : 
                 continue 
             else : 
-                edge_screen.append(viewEdge(i,whs[j]))
-                #edge_id.append((whs.index(i),j))
+                edge_screen.append(viewEdge(warehouse1=i,warehouse2=whs[j],wh_id1=whs.index(i),wh_id2=j,vme =vme))
+                #edge_node_id.append((whs.index(i),j))
 
 
     

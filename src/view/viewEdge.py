@@ -1,7 +1,10 @@
+
+
+
 class viewEdge :
     
     
-    def __init__(self,warehouse1,warehouse2,pheromon_coeff = 0) :
+    def __init__(self,warehouse1,warehouse2,wh_id1,wh_id2,vme,pheromon_coeff=0) :
         """
         Initializes an edge between two objects of viewWarehouse
         
@@ -13,6 +16,9 @@ class viewEdge :
         self.warehouse1 = warehouse1
         self.warehouse2 = warehouse2
         self.pheromon_coeff = pheromon_coeff
+        self.vme = vme
+        self.wh_id1=wh_id1
+        self.wh_id2=wh_id2
 
     def update(self) : 
         """
@@ -20,7 +26,7 @@ class viewEdge :
         
         :param self: Description
         """
-        self.pheromon_coeff += 10
+        self.pheromon_coeff = self.vme.get_pheromone(self.wh_id1,self.wh_id2)
 
 
 
