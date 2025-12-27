@@ -44,6 +44,10 @@ def main():
     frame.spawn_ants()
     frame.save_initial_state()
 
+    # Set automated mode
+    frame.automated = True
+    frame.mode = "live"
+
     # ACO step counter
     step_count = 0
     max_steps = 100
@@ -53,6 +57,7 @@ def main():
         nonlocal step_count
         if step_count >= max_steps:
             print("ACO finished")
+            frame.play = False  # Stop the animation loop
             return
 
         # Perform one ACO step without reset
@@ -77,6 +82,7 @@ def main():
 
         aco.current_step += 1
         step_count += 1
+        print(f"ACO step {step_count} completed")
 
         # Get current cycles before reset
         current_cycles = [ant.current_cycle.cycle_node_ids.copy() for ant in aco.ants]

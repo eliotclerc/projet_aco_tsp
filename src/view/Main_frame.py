@@ -39,6 +39,7 @@ class Main_frame(tk.ttk.Frame):
         self.pixel_counter = 0
         self.anim_id = 0
         self.edges_id = edges_id
+        self.automated = False
 
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
@@ -240,11 +241,12 @@ class Main_frame(tk.ttk.Frame):
                     self.save_state()
                 self.animating = False
                 self.paused = False
-                self.mode = "replay"
-                self.play = False 
+                if not self.automated:
+                    self.mode = "replay"
+                    self.play = False 
 
-                self.step_slider.config(to=len(self.timeline) - 1,state="normal")
-                self.step_slider.set(len(self.timeline) - 1)
+                    self.step_slider.config(to=len(self.timeline) - 1,state="normal")
+                    self.step_slider.set(len(self.timeline) - 1)
 
             return
 
