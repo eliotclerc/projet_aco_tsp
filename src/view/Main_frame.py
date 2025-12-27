@@ -172,8 +172,8 @@ class Main_frame(tk.ttk.Frame):
             id +=5
         
         for i in self.edges : 
-            i.canvas_id = self.canvas1.create_line(i.warehouse1.screenX, i.warehouse1.screenY, i.warehouse2.screenX, i.warehouse2.screenY, fill=self.colors[i.pheromon_coeff], width=4)
-        
+            i.canvas_id = self.canvas1.create_line(i.warehouse1.screenX, i.warehouse1.screenY, i.warehouse2.screenX, i.warehouse2.screenY, fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1), width=4)
+            #print(f"pc spawn ={i.pheromon_coeff}")
     
     
     def spawn_ants(self):
@@ -210,7 +210,7 @@ class Main_frame(tk.ttk.Frame):
         for i in self.edges : 
             i.update()
             self.canvas1.itemconfig(i.canvas_id,fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1),width=4)
-
+            #print(f"pc udpated ={i.pheromon_coeff}")
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
@@ -311,7 +311,7 @@ class Main_frame(tk.ttk.Frame):
 
        
         for edge, coeff in zip(self.edges, state["edges"]):
-            self.canvas1.itemconfig(edge.canvas_id,fill=self.colors[coeff])
+            self.canvas1.itemconfig(edge.canvas_id,fill=self.get_hex_color_from_number(edge.pheromon_coeff,0,1))
         
 
     def on_slider(self, value):
@@ -344,7 +344,7 @@ class Main_frame(tk.ttk.Frame):
 
         for edge in self.edges:
             edge.pheromon_coeff = 0
-            self.canvas1.itemconfig(edge.canvas_id, fill=self.colors[0])
+            self.canvas1.itemconfig(edge.canvas_id, fill=self.get_hex_color_from_number(edge.pheromon_coeff,0,1))
 
     
         self.step_slider.config(state="disabled", to=0)

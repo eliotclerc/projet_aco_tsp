@@ -26,7 +26,7 @@ class viewEdge :
         
         :param self: Description
         """
-        self.pheromon_coeff = self.vme.get_pheromone(self.wh_id1,self.wh_id2)
+        self.pheromon_coeff = float(self.vme.get_normalized()[self.wh_id1][self.wh_id2])
 
 
 
