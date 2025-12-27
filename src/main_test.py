@@ -34,10 +34,16 @@ def main():
     # Creates ants view model
     vma = ViewModelAnt(ants=aco.ants, warehouse_vm=vmw)
 
+
+    # ACO step counter
+    step_count = 0
+    max_steps = 100
+    last_step_time = time.time() - 3  # Allow immediate start
+
     # Create tkinter app & frame and lists
     app = Frame_app()
     whs, edge_screen = lists_from_view_model_to_view(whs_vm=vmw.get_positions(), vme=vme, screen_geom=app.get_geom())
-    frame = Main_frame(app, warehouses=whs, ants=vma, edges=edge_screen, vme=vme)
+    frame = Main_frame(app, warehouses=whs, ants=vma, edges=edge_screen, vme=vme,max_steps = max_steps)
 
     # Act upon windows and lists
     frame.init_container_on_canva()
@@ -48,11 +54,7 @@ def main():
     frame.automated = True
     frame.mode = "live"
 
-    # ACO step counter
-    step_count = 0
-    max_steps = 100
-    last_step_time = time.time() - 3  # Allow immediate start
-
+    
     def run_aco_step():
         nonlocal step_count
         if step_count >= max_steps:
@@ -82,7 +84,7 @@ def main():
 
         aco.current_step += 1
         step_count += 1
-        print(f"ACO step {step_count} completed")
+        #print(f"ACO step {step_count} completed")
 
         # Get current cycles before reset
         current_cycles = [ant.current_cycle.cycle_node_ids.copy() for ant in aco.ants]
@@ -101,6 +103,7 @@ def main():
                 for j in range(1, len(cycle)):
                     warehouse_id = cycle[j]
                     frame.move_ants(frame.view_ants[i], warehouse_id=warehouse_id, anim_id=current_anim, speed=5.0)
+
 
         # Next step will be triggered by check_start when animation finishes
 

@@ -11,7 +11,7 @@ import matplotlib.cm as cm
 
 class Main_frame(tk.ttk.Frame):
 
-    def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[]):
+    def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[],max_steps = 0):
         """
         Initializes the tkinter window, creates all of the buttons and the canva, defines the methods to 
         make the animations
@@ -40,6 +40,8 @@ class Main_frame(tk.ttk.Frame):
         self.anim_id = 0
         self.edges_id = edges_id
         self.automated = False
+        self.current_step = 0   
+        self.max_steps = max_steps
 
 
         custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
@@ -104,7 +106,7 @@ class Main_frame(tk.ttk.Frame):
         self.canvas1.grid(row=0, column=2, sticky="NSEW", padx=110, pady=10)
 
         #Adding processing info label:
-        self.ant_label = tk.ttk.Label(self, text=f"Number of ants set to: {self.nb_ants}",font = custom_font,foreground="darkblue",borderwidth=2,relief="solid")
+        self.ant_label = tk.ttk.Label(self, text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}",font = custom_font,foreground="darkblue",borderwidth=2,relief="solid")
         self.ant_label.grid(column=2, row=1, sticky="NSEW", padx=110)
          
         #Adding the heatbar
@@ -138,7 +140,7 @@ class Main_frame(tk.ttk.Frame):
             value = int(self.ant.get())
             self.nb_ants = value              
             self.result_label.config(text=f"Ants set to: {value}")
-            self.ant_label.config(text=f"Number of ants set to: {self.nb_ants}")
+            self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
         except ValueError:
             self.result_label.config(text="Invalid number")
 
@@ -208,10 +210,12 @@ class Main_frame(tk.ttk.Frame):
         :param self: 
         :param edge_to_change: canvas id number associated to every edge from one to n, from the first to the last created in in_container_on_canva
         """
+        self.current_step += 1
         for i in self.edges : 
             i.update()
             self.canvas1.itemconfig(i.canvas_id,fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1),width=4)
             #print(f"pc udpated ={i.pheromon_coeff}")
+            self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
@@ -237,7 +241,7 @@ class Main_frame(tk.ttk.Frame):
             if all(not a.is_moving for a in self.view_ants):
 
                 if self.mode == "live":
-                    #self.update_colors()
+                    self.update_colors()
                     self.save_state()
                 self.animating = False
                 self.paused = False
@@ -272,7 +276,7 @@ class Main_frame(tk.ttk.Frame):
                 ant.screenY = y_target
                 ant.is_moving = False
                 if self.mode == "live":
-                    self.update_colors()
+                    #self.update_colors()
                     self.save_state()
                 self._start_next_move(ant)
                 return
