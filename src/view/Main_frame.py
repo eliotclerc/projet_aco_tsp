@@ -24,7 +24,7 @@ class Main_frame(tk.ttk.Frame):
         :param ants: instance of viewAnt
         :param edges: instance of viewEdge
         """
-        self.colors = [self.get_hex_color_from_number(i,0,100) for i in range(0,99)]
+        self.colors = [self.get_hex_color_from_number(i,0,100) for i in range(0,100)]
         self.warehouses = warehouses
         self.nb_ants = nb_ants
         self.nb_wh = nb_wh
