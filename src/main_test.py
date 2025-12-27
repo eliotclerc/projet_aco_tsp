@@ -37,7 +37,7 @@ def main():
 
     # ACO step counter
     step_count = 0
-    max_steps = 100
+    max_steps = 10
     last_step_time = time.time() - 3  # Allow immediate start
 
     # Create tkinter app & frame and lists
@@ -102,7 +102,7 @@ def main():
                 # Move ant along its cycle
                 for j in range(1, len(cycle)):
                     warehouse_id = cycle[j]
-                    frame.move_ants(frame.view_ants[i], warehouse_id=warehouse_id, anim_id=current_anim, speed=5.0)
+                    frame.move_ants(frame.view_ants[i], warehouse_id=warehouse_id, anim_id=current_anim, speed=20.0)
 
 
         # Next step will be triggered by check_start when animation finishes

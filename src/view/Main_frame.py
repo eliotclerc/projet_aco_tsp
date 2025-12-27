@@ -5,6 +5,8 @@ from view.viawAnt import viewAnt
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
+from PIL import Image, ImageDraw
+from pathlib import Path
 
 
 
@@ -97,13 +99,15 @@ class Main_frame(tk.ttk.Frame):
         self.reset_button.grid(row=5, column=0, sticky="EW", pady=5)
 
 
-        #save button
-        self.save_button = tk.ttk.Button(left, text="Save", command=None).grid(row=6, column=0, sticky="EW", pady=5)
-
-
         #Adding the canva : 
         self.canvas1 = tk.Canvas(self, width=container.get_geom()[0]*0.6, height=container.get_geom()[1]*0.8, background='white')
         self.canvas1.grid(row=0, column=2, sticky="NSEW", padx=110, pady=10)
+
+
+        #save button
+        self.save_button = tk.ttk.Button(left, text="Save", command = lambda: self.save(self.canvas1, filename="output.png"))
+        self.save_button.grid(row=6, column=0, sticky="EW", pady=5)
+        self.save_button.config(state=tk.DISABLED)
 
         #Adding processing info label:
         self.ant_label = tk.ttk.Label(self, text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}",font = custom_font,foreground="darkblue",borderwidth=2,relief="solid")
@@ -168,11 +172,10 @@ class Main_frame(tk.ttk.Frame):
         
         :param self: 
         """
-        id = 0
+      
         for i in self.warehouses : 
-            i.idWarehouse = id
-            self.canvas1.create_oval(i.screenX - i.r, i.screenY - i.r,i.screenX + i.r, i.screenY + i.r,fill="",outline=self.colors[i.idWarehouse],width=3)         
-            id +=5
+            self.canvas1.create_oval(i.screenX - i.r, i.screenY - i.r,i.screenX + i.r, i.screenY + i.r,fill="",outline=self.colors[0],width=3)         
+           
         
         for i in self.edges : 
             i.canvas_id = self.canvas1.create_line(i.warehouse1.screenX, i.warehouse1.screenY, i.warehouse2.screenX, i.warehouse2.screenY, fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1), width=4)
@@ -219,6 +222,7 @@ class Main_frame(tk.ttk.Frame):
                 self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
             else :
                 self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.max_steps} / {self.max_steps}")
+                self.save_button.config(state=tk.NORMAL)
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
@@ -249,6 +253,7 @@ class Main_frame(tk.ttk.Frame):
                 self.animating = False
                 self.paused = False
                 if not self.automated:
+                    
                     self.mode = "replay"
                     self.play = False 
 
@@ -392,7 +397,31 @@ class Main_frame(tk.ttk.Frame):
         return mcolors.to_hex(rgba_color)
 
 
- 
 
 
+    def save(self, canva, filename="canvas.png"):
+        self.canvas1.update_idletasks()
 
+        base_dir = Path(__file__).resolve().parent       
+        output_dir = base_dir.parent / "input_output"     
+        output_dir.mkdir(exist_ok=True)                   
+
+        output_path = output_dir / filename
+
+        width = canva.winfo_width()
+        height = canva.winfo_height()
+
+        # Image blanche
+        img = Image.new("RGB", (width, height), "white")
+        draw = ImageDraw.Draw(img)
+
+        # Dessin des points
+        
+
+        for i in self.edges:
+            draw.line((i.warehouse1.screenX, i.warehouse1.screenY,i.warehouse2.screenX, i.warehouse2.screenY),fill=self.get_hex_color_from_number(i.pheromon_coeff, 0, 1),width=4)
+        
+        r = 25
+        for i in self.warehouses:draw.ellipse((i.screenX - r, i.screenY - r, i.screenX + r, i.screenY + r),fill = None,outline=self.colors[0],width=3)
+
+        img.save(output_path)
