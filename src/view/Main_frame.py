@@ -241,7 +241,7 @@ class Main_frame(tk.ttk.Frame):
                 self.animating = False
                 self.paused = False
                 self.mode = "replay"
-                self.play = True 
+                self.play = False 
 
                 self.step_slider.config(to=len(self.timeline) - 1,state="normal")
                 self.step_slider.set(len(self.timeline) - 1)
