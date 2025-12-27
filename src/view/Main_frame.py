@@ -335,6 +335,8 @@ class Main_frame(tk.ttk.Frame):
         self.animating = False
         self.paused = False
         self.mode = "live"
+        self.current_step = 0 
+        self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
 
         for ant in self.view_ants:
             ant.move_queue.clear()
