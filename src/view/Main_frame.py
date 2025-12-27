@@ -215,7 +215,10 @@ class Main_frame(tk.ttk.Frame):
             i.update()
             self.canvas1.itemconfig(i.canvas_id,fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1),width=4)
             #print(f"pc udpated ={i.pheromon_coeff}")
-            self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
+            if(self.current_step < self.max_steps) :
+                self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
+            else :
+                self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.max_steps} / {self.max_steps}")
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
