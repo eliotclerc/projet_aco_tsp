@@ -73,7 +73,7 @@ class Main_frame(tk.ttk.Frame):
 
 
         # ant label
-        self.ant_label = tk.ttk.Label(left, text='Number of ants :')
+        self.ant_label = tk.ttk.Label(left, text='Input number of ants :')
         self.ant_label.grid(column=0, row=0, sticky="W", pady=10)
 
         # ant entry
@@ -128,7 +128,17 @@ class Main_frame(tk.ttk.Frame):
         #Adding processing step info label:
         self.step_info_label = tk.ttk.Label(left,text=f"Step counter: {self.current_step} / {self.max_steps}",font=self.info_font)
         self.step_info_label.grid(row=8, column=0, sticky="W")
+
+
+        #Adding ACO status label: 
+        self.step_aco_label = tk.ttk.Label(left,text=f"ACO status: settings",font=self.info_font)
+        self.step_aco_label.grid(row=9, column=0, sticky="W")
          
+        #Adding save status label
+        self.save_feedback_label = tk.ttk.Label(left,text="",font=self.info_font)
+        self.save_feedback_label.grid(row=10, column=0, sticky="W")
+
+
         #Adding the heatbar
         self.heatbar = tk.Canvas(self, width=70, height = container.get_geom()[1]*0.8, highlightthickness=1, highlightbackground="black")
         self.heatbar.grid(row=0, column=2, sticky="E", pady=10)
@@ -171,11 +181,13 @@ class Main_frame(tk.ttk.Frame):
             self.paused = False
 
         else : 
+            self.step_aco_label.config(text=f"ACO status: in progress")
             self.play = True
-            #self.animating = True
             self.mode = "live"
             self.timeline.clear()
             self.step_slider.config(state="disabled")
+            self.set_button.config(state=tk.DISABLED)
+            self.ant_entry.config(state=tk.DISABLED)
 
     def stop(self):
         if self.animating:
@@ -237,8 +249,17 @@ class Main_frame(tk.ttk.Frame):
             if(self.current_step < self.max_steps) :
                 self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
             else :
-                self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
+                self.step_info_label.config(text=f"Step counter: {self.max_steps} / {self.max_steps}")
                 self.save_button.config(state=tk.NORMAL)
+                self.step_aco_label.config(text=f"ACO status: done")
+                self.mode = "replay"
+                self.animating = True
+                self.play = False 
+                   
+
+                self.step_slider.config(to=len(self.timeline) - 1,state="normal")
+                self.step_slider.set(len(self.timeline) - 1)
+
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
 
@@ -260,7 +281,8 @@ class Main_frame(tk.ttk.Frame):
         
         if not ant.move_queue:
             ant.is_moving = False
-
+            
+         
             if all(not a.is_moving for a in self.view_ants):
 
                 if self.mode == "live":
@@ -268,14 +290,8 @@ class Main_frame(tk.ttk.Frame):
                     self.save_state()
                 self.animating = False
                 self.paused = False
-                if not self.automated:
-                    
-                    self.mode = "replay"
-                    self.play = False 
-
-                    self.step_slider.config(to=len(self.timeline) - 1,state="normal")
-                    self.step_slider.set(len(self.timeline) - 1)
-
+                
+            
             return
 
         ant.is_moving = True
@@ -300,7 +316,7 @@ class Main_frame(tk.ttk.Frame):
                 ant.screenY = y_target
                 ant.is_moving = False
                 if self.mode == "live":
-                    #self.update_colors()
+
                     self.save_state()
                 self._start_next_move(ant)
                 return
@@ -361,6 +377,7 @@ class Main_frame(tk.ttk.Frame):
         self.mode = "live"
         self.current_step = 0 
         self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
+        self.step_aco_label.config(text=f"ACO status: settings")
 
         for ant in self.view_ants:
             ant.move_queue.clear()
@@ -382,6 +399,8 @@ class Main_frame(tk.ttk.Frame):
         self.step_slider.config(state="disabled", to=0)
         self.step_slider.set(0)
         self.anim_id += 1
+        self.set_button.config(state=tk.NORMAL)
+        self.ant_entry.config(state=tk.NORMAL)
         
 
     def get_color_from_number(self,value, min_val, max_val):
@@ -441,3 +460,5 @@ class Main_frame(tk.ttk.Frame):
         for i in self.warehouses:draw.ellipse((i.screenX - r, i.screenY - r, i.screenX + r, i.screenY + r),fill = None,outline=self.colors[0],width=3)
 
         img.save(output_path)
+        self.save_feedback_label.config(text="Image saved ✓")
+        self.after(2000, lambda: self.save_feedback_label.config(text=""))
