@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 
+
 class Main_frame(tk.ttk.Frame):
 
     def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[],max_steps = 0):
@@ -44,7 +45,8 @@ class Main_frame(tk.ttk.Frame):
         self.automated = False
         self.current_step = 0   
         self.max_steps = max_steps
-        self.info_font = tkfont.Font(family="Helvetica",size=13,weight="normal")
+        self.info_font = tkfont.Font(size=10)
+
   
         
 
@@ -71,6 +73,22 @@ class Main_frame(tk.ttk.Frame):
         left.grid(row=0, column=0, sticky="N", padx=20, pady=20)
         left.grid_columnconfigure(0, weight=0,minsize =300)
 
+        config_frame = tk.ttk.LabelFrame(left, text="Configuration")
+        config_frame.grid(row=0, column=0, sticky="EW", pady=(0, 15))
+        config_frame.columnconfigure(0, weight=1)
+
+        #Action frame: 
+
+        action_frame = tk.ttk.LabelFrame(left, text="Actions")
+        action_frame.grid(row=1, column=0, sticky="EW", pady=(0, 15))
+        action_frame.columnconfigure(0, weight=1)
+    
+        #Status frame :
+
+        status_frame = tk.ttk.LabelFrame(left, text="Status")
+        status_frame.grid(row=2, column=0, sticky="EW")
+        status_frame.columnconfigure(0, weight=1)
+
 
         # ant label
         self.ant_label = tk.ttk.Label(left, text='Input number of ants :')
@@ -79,25 +97,23 @@ class Main_frame(tk.ttk.Frame):
         # ant entry
         self.ant = tk.StringVar()
         self.ant_entry = tk.ttk.Entry(left, textvariable=self.ant)
-        self.ant_entry.grid(column=0, row=1, sticky="EW", pady=5)
+        self.ant_entry.grid(in_=config_frame, row=1, column=0, sticky="EW")
         self.ant_entry.focus()
 
         #set button
         self.set_button = tk.ttk.Button(left, text='Set', command=self.set)
-        self.set_button.grid(column=0, row=2, sticky="EW", pady=5)
+        self.set_button.grid(in_=config_frame, row=2, column=0, sticky="EW")
   
 
         #Creating a frame to place two buttons in one column : start and stop
 
         btn_frame = tk.ttk.Frame(left)
-        btn_frame.grid(row=4, column=0, sticky="EW", pady=10)
+        btn_frame.grid(in_=action_frame, row=0, column=0, sticky="EW")
         btn_frame.grid_columnconfigure(0, weight=1)
         btn_frame.grid_columnconfigure(1, weight=1)
-        
+
 
         #Adding start & stop button
-
-
         self.start_button = tk.ttk.Button(btn_frame, text="▶️ Start", command=self.start)
         self.start_button.grid(row=0, column=0, sticky="EW", padx=2)
 
@@ -107,7 +123,7 @@ class Main_frame(tk.ttk.Frame):
 
         #reset button 
         self.reset_button = tk.ttk.Button(left, text="Reset", command=self.reset)
-        self.reset_button.grid(row=5, column=0, sticky="EW", pady=5)
+        self.reset_button.grid(in_=action_frame, row=1, column=0, sticky="EW", pady=5)
 
 
         #Adding the canva : 
@@ -117,26 +133,26 @@ class Main_frame(tk.ttk.Frame):
 
         #save button
         self.save_button = tk.ttk.Button(left, text="Save", command = lambda: self.save(self.canvas1, filename="output.png"))
-        self.save_button.grid(row=6, column=0, sticky="EW", pady=5)
+        self.save_button.grid(in_=action_frame, row=2, column=0, sticky="EW")
         self.save_button.config(state=tk.DISABLED)
 
         #Adding processing ant info label:
         self.ants_info_label = tk.ttk.Label(left,text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
-        self.ants_info_label.grid(row=7, column=0, sticky="W", pady=(6, 0))
+        self.ants_info_label.grid(in_=status_frame, row=0, column=0, sticky="W")
 
 
         #Adding processing step info label:
         self.step_info_label = tk.ttk.Label(left,text=f"Step counter: {self.current_step} / {self.max_steps}",font=self.info_font)
-        self.step_info_label.grid(row=8, column=0, sticky="W")
+        self.step_info_label.grid(in_=status_frame, row=1, column=0, sticky="W")
 
 
         #Adding ACO status label: 
         self.step_aco_label = tk.ttk.Label(left,text=f"ACO status: settings",font=self.info_font)
-        self.step_aco_label.grid(row=9, column=0, sticky="W")
+        self.step_aco_label.grid(in_=status_frame, row=2, column=0, sticky="W")
          
         #Adding save status label
         self.save_feedback_label = tk.ttk.Label(left,text="",font=self.info_font)
-        self.save_feedback_label.grid(row=10, column=0, sticky="W")
+        self.save_feedback_label.grid(in_=status_frame, row=3, column=0, sticky="W")
 
 
         #Adding the heatbar
@@ -181,7 +197,7 @@ class Main_frame(tk.ttk.Frame):
             self.paused = False
 
         else : 
-            self.step_aco_label.config(text=f"ACO status: in progress")
+            self.step_aco_label.config(text=f"ACO: running")
             self.play = True
             self.mode = "live"
             self.timeline.clear()
@@ -192,6 +208,7 @@ class Main_frame(tk.ttk.Frame):
     def stop(self):
         if self.animating:
             self.paused = True
+            self.step_aco_label.config(text=f"Paused")
 
 
     def init_container_on_canva(self) : 
@@ -461,5 +478,5 @@ class Main_frame(tk.ttk.Frame):
         for i in self.warehouses:draw.ellipse((i.screenX - r, i.screenY - r, i.screenX + r, i.screenY + r),fill = None,outline=self.colors[0],width=3)
 
         img.save(output_path)
-        self.save_feedback_label.config(text="Image saved ✓")
+        self.save_feedback_label.config(text="Image saved ✓",foreground="green",font=tkfont.Font(size=9, slant="italic"))
         self.after(2000, lambda: self.save_feedback_label.config(text=""))

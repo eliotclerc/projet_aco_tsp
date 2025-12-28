@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import ttkbootstrap as tb 
 
 class Frame_app(tk.Tk):
 
@@ -11,6 +11,8 @@ class Frame_app(tk.Tk):
         """
         super().__init__()
 
+
+        self.style = tb.Style(theme="darkly")
         root = tk.Tk()
         
         self.screen_width = root.winfo_screenwidth()

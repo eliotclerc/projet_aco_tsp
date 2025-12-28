@@ -14,6 +14,7 @@ from model.graph import Graph
 from model.ant import Ant
 from model.aco import AcoModel
 
+
 def main():
     # Create graph
     graph = Graph("test/graph/test_0.csv")  # Using a small test file
