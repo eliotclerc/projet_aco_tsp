@@ -357,7 +357,8 @@ class Main_frame(tk.ttk.Frame):
 
        
         for edge, coeff in zip(self.edges, state["edges"]):
-            self.canvas1.itemconfig(edge.canvas_id,fill=self.get_hex_color_from_number(edge.pheromon_coeff,0,1))
+            edge.pheromon_coeff = coeff
+            self.canvas1.itemconfig(edge.canvas_id,fill=self.get_hex_color_from_number(coeff,0,1))
         
 
     def on_slider(self, value):
