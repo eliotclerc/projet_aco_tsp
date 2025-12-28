@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import font
+import tkinter.font as tkfont
 from math import sqrt
 from view.viawAnt import viewAnt
 import matplotlib.pyplot as plt
@@ -44,12 +44,18 @@ class Main_frame(tk.ttk.Frame):
         self.automated = False
         self.current_step = 0   
         self.max_steps = max_steps
+        self.info_font = tkfont.Font(family="Helvetica",size=13,weight="normal")
+  
+        
 
 
-        custom_font = tk.font.Font(family="Arial", size=8,weight = "bold")
+
+        
         super().__init__(container)
         options = {'padx': 5, 'pady': 5}
         self.grid(sticky=tk.NSEW)
+ 
+
 
         #Two columns : one for configuration (left), one for the canvas (right)
         self.columnconfigure(0, weight=0)  #Left column
@@ -63,6 +69,8 @@ class Main_frame(tk.ttk.Frame):
         #Configuration frame: 
         left = tk.ttk.Frame(self)
         left.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+        left.grid_columnconfigure(0, weight=0,minsize =300)
+
 
         # ant label
         self.ant_label = tk.ttk.Label(left, text='Number of ants :')
@@ -77,22 +85,25 @@ class Main_frame(tk.ttk.Frame):
         #set button
         self.set_button = tk.ttk.Button(left, text='Set', command=self.set)
         self.set_button.grid(column=0, row=2, sticky="EW", pady=5)
-
-        # result label
-        self.result_label = tk.ttk.Label(left, text="")
-        self.result_label.grid(column=0, row=3, sticky="W", pady=5)
+  
 
         #Creating a frame to place two buttons in one column : start and stop
 
         btn_frame = tk.ttk.Frame(left)
-        btn_frame.grid(row=4, column=0, sticky="W", pady=10)
-
+        btn_frame.grid(row=4, column=0, sticky="EW", pady=10)
+        btn_frame.grid_columnconfigure(0, weight=1)
+        btn_frame.grid_columnconfigure(1, weight=1)
+        
 
         #Adding start & stop button
 
 
-        self.start_button = tk.ttk.Button(btn_frame, text="▶️ Start",command = self.start).grid(row=0, column=0, padx=2)
-        self.stop_button = tk.ttk.Button(btn_frame, text="⏹️ Stop",command = self.stop).grid(row=0, column=1, padx=2)
+        self.start_button = tk.ttk.Button(btn_frame, text="▶️ Start", command=self.start)
+        self.start_button.grid(row=0, column=0, sticky="EW", padx=2)
+
+        self.stop_button = tk.ttk.Button(btn_frame, text="⏹️ Stop", command=self.stop)
+        self.stop_button.grid(row=0, column=1, sticky="EW", padx=2)
+
 
         #reset button 
         self.reset_button = tk.ttk.Button(left, text="Reset", command=self.reset)
@@ -109,9 +120,14 @@ class Main_frame(tk.ttk.Frame):
         self.save_button.grid(row=6, column=0, sticky="EW", pady=5)
         self.save_button.config(state=tk.DISABLED)
 
-        #Adding processing info label:
-        self.ant_label = tk.ttk.Label(self, text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}",font = custom_font,foreground="darkblue",borderwidth=2,relief="solid")
-        self.ant_label.grid(column=2, row=1, sticky="NSEW", padx=110)
+        #Adding processing ant info label:
+        self.ants_info_label = tk.ttk.Label(left,text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
+        self.ants_info_label.grid(row=7, column=0, sticky="W", pady=(6, 0))
+
+
+        #Adding processing step info label:
+        self.step_info_label = tk.ttk.Label(left,text=f"Step counter: {self.current_step} / {self.max_steps}",font=self.info_font)
+        self.step_info_label.grid(row=8, column=0, sticky="W")
          
         #Adding the heatbar
         self.heatbar = tk.Canvas(self, width=70, height = container.get_geom()[1]*0.8, highlightthickness=1, highlightbackground="black")
@@ -143,10 +159,10 @@ class Main_frame(tk.ttk.Frame):
         try:
             value = int(self.ant.get())
             self.nb_ants = value              
-            self.result_label.config(text=f"Ants set to: {value}")
-            self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
+            self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
+            self.ants_info_label.config(text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
         except ValueError:
-            self.result_label.config(text="Invalid number")
+            self.ants_info_label.config(text=f"Number of ants set to: Invalid number")
 
     def start(self):
         """  Handle start button click event
@@ -219,9 +235,9 @@ class Main_frame(tk.ttk.Frame):
             self.canvas1.itemconfig(i.canvas_id,fill=self.get_hex_color_from_number(i.pheromon_coeff,0,1),width=4)
             #print(f"pc udpated ={i.pheromon_coeff}")
             if(self.current_step < self.max_steps) :
-                self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
+                self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
             else :
-                self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.max_steps} / {self.max_steps}")
+                self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
                 self.save_button.config(state=tk.NORMAL)
 
     def move_ants(self, view_ant, warehouse_id, speed=2,anim_id = None):
@@ -344,7 +360,7 @@ class Main_frame(tk.ttk.Frame):
         self.paused = False
         self.mode = "live"
         self.current_step = 0 
-        self.ant_label.config(text=f"Number of ants set to: {self.nb_ants} | step counter = {self.current_step} / {self.max_steps}")
+        self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
 
         for ant in self.view_ants:
             ant.move_queue.clear()
