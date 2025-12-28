@@ -5,11 +5,41 @@ from .Main_frame import Main_frame
 from .viewWarehouse import viewWarehouse
 from .viawAnt import viewAnt
 from .viewEdge import viewEdge
+"""
+Utility functions to convert view-model data into Tkinter view objects.
+
+This module handles the mapping of model coordinates to screen coordinates
+and the creation of visual warehouses and edges.
+"""
 
 
 
 def lists_from_view_model_to_view(whs_vm ,vme,screen_geom = []) : 
    
+    """
+    Convert warehouse coordinates from the view-model to screen-space view objects.
+
+    This function:
+    - Normalizes warehouse coordinates from the model space
+    - Maps them into canvas coordinates with margins
+    - Creates visual warehouse objects
+    - Creates visual edges between all warehouse pairs (upper triangle only)
+
+    Parameters
+    ----------
+    whs_vm : list[tuple[float, float]]
+        List of warehouse coordinates from the model (x, y).
+    vme : object
+        Edge-related model data passed to each viewEdge.
+    screen_geom : list[int]
+        Screen dimensions as [width, height].
+
+    Returns
+    -------
+    tuple[list[viewWarehouse], list[viewEdge]]
+        - List of visual warehouse objects
+        - List of visual edge objects
+    """
     
     lmx = [x for x, y in whs_vm]
     lmy = [y for x, y in whs_vm]
@@ -25,7 +55,7 @@ def lists_from_view_model_to_view(whs_vm ,vme,screen_geom = []) :
 
 
     edge_screen = []
-    #edge_node_id = []
+ 
 
     for i in whs : 
         for j in range(0, len(whs)):
@@ -33,60 +63,7 @@ def lists_from_view_model_to_view(whs_vm ,vme,screen_geom = []) :
                 continue 
             else : 
                 edge_screen.append(viewEdge(warehouse1=i,warehouse2=whs[j],wh_id1=whs.index(i),wh_id2=j,vme =vme))
-                #edge_node_id.append((whs.index(i),j))
-
-
-    
-    """
-    for i, wh in enumerate(whs):
-        for j in range(0, i + 1):
-            edge_screen.append(viewEdge(wh, whs[j]))
-
-    print(len(edge_screen))
-
-    #A corriger si on veut utiliser celui-la, il crée des edges en trop
-    """
-
+              
     return whs,edge_screen
   
-
-#a,b,c = lists_from_view_model_to_view()
-
-if __name__ == "__main__":
-    """
-    app = Frame_app()       
-    frame = Main_frame(app,warehouses=a,ants = b,edges=c)
-    frame.init_container_on_canva()
-    frame.spawn_ants()
-    frame.save_initial_state()
-    
-
-  
-    path = [(700,100),(100,500),(700,500)]
-
-   
-    def check_start():
-        if frame.play and not frame.animating:
-            frame.play = False
-            frame.animating = True
-            frame.anim_id += 1
-            current_anim = frame.anim_id
-
-            frame.move_ants(frame.ants[0], path[0][0], path[0][1],anim_id=current_anim)
-            frame.move_ants(frame.ants[0], path[1][0], path[1][1],anim_id=current_anim)
-
-            frame.move_ants(frame.ants[1], path[1][0], path[1][1],anim_id=current_anim)
-            frame.move_ants(frame.ants[1], path[2][0], path[2][1],anim_id=current_anim)
-
-        app.after(50, check_start)
-
-
-    check_start()
-
-   
-
-    app.mainloop()
-
-"""
-
 
