@@ -12,7 +12,7 @@ class Frame_app(tk.Tk):
         super().__init__()
 
 
-        self.style = tb.Style(theme="darkly")
+        self.style = tb.Style(theme="morph")
         root = tk.Tk()
         
         self.screen_width = root.winfo_screenwidth()
