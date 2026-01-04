@@ -77,4 +77,3 @@ class ViewModelWarehouse:
         positions = [(float(x), float(y)) for x, y in positions_2d]
         
         return positions
-

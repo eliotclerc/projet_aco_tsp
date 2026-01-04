@@ -7,11 +7,12 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 from PIL import Image, ImageDraw
 from pathlib import Path
+from model.aco import AcoModel
 
 
 class Main_frame(tk.ttk.Frame):
 
-    def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[],max_steps = 0):
+    def __init__(self, container,vme,nb_ants= None,nb_wh= None,warehouses = [], ants = [], edges = [],edges_id=[],max_steps = 0, graph=None, alpha=1.0, beta=2.0, evaporation=0.5):
         """
     Initialize the main Tkinter frame of the application.
 
@@ -67,6 +68,13 @@ class Main_frame(tk.ttk.Frame):
         self.current_step = 0   
         self.max_steps = max_steps
         self.info_font = tkfont.Font(size=10)
+        
+        # Store graph and ACO parameters for later ACO creation
+        self.graph = graph
+        self.alpha = alpha
+        self.beta = beta
+        self.evaporation = evaporation
+        self.aco = None  # Will be created when start is pressed
 
   
         super().__init__(container)
@@ -107,9 +115,9 @@ class Main_frame(tk.ttk.Frame):
         self.ant_label = tk.ttk.Label(left, text='Input number of ants :')
         self.ant_label.grid(column=0, row=0, sticky="W", pady=10)
 
-        # ant entry
-        self.ant = tk.StringVar()
-        self.ant_entry = tk.ttk.Entry(left, textvariable=self.ant)
+        # ant entry - using IntVar for integer validation
+        self.ant = tk.IntVar()
+        self.ant_entry = tk.Spinbox(left, from_=1, to=1000, textvariable=self.ant, width=20)
         self.ant_entry.grid(in_=config_frame, row=1, column=0, sticky="EW")
         self.ant_entry.focus()
 
@@ -149,7 +157,8 @@ class Main_frame(tk.ttk.Frame):
         self.save_button.config(state=tk.DISABLED)
 
         #Adding processing ant info label:
-        self.ants_info_label = tk.ttk.Label(left,text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
+        initial_text = f"Number of ants set to: {self.nb_ants}" if self.nb_ants is not None else "Number of ants set to: Not set"
+        self.ants_info_label = tk.ttk.Label(left,text=initial_text,font=self.info_font)
         self.ants_info_label.grid(in_=status_frame, row=0, column=0, sticky="W")
 
 
@@ -198,13 +207,19 @@ class Main_frame(tk.ttk.Frame):
     This method parses the value from the input field, updates the
     internal ant count, and refreshes the corresponding status label.
     If the input is invalid, an error message is displayed instead.
+    If ACO already exists, shows the actual number of ants in ACO.
         """      
         try:
-            value = int(self.ant.get())
-            self.nb_ants = value              
+            value = self.ant.get()  # IntVar already returns an integer
+            self.nb_ants = value
+            # If ACO exists, show actual number of ants, otherwise show the set value
+            if self.aco is not None:
+                actual_nb_ants = len(self.aco.ants)
+                self.ants_info_label.config(text=f"Number of ants set to: {value} (ACO has {actual_nb_ants} ants)",font=self.info_font)
+            else:
+                self.ants_info_label.config(text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
             self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
-            self.ants_info_label.config(text=f"Number of ants set to: {self.nb_ants}",font=self.info_font)
-        except ValueError:
+        except (ValueError, tk.TclError):
             self.ants_info_label.config(text=f"Number of ants set to: Invalid number")
 
     def start(self):
@@ -213,6 +228,7 @@ class Main_frame(tk.ttk.Frame):
 
     If an animation is paused, it resumes execution.
     Otherwise, this method initializes a new live run by:
+    - creating ACO model with the number of ants from UI
     - switching to live mode
     - clearing the timeline
     - disabling configuration inputs
@@ -221,8 +237,29 @@ class Main_frame(tk.ttk.Frame):
 
         if self.animating:
             self.paused = False
-
-        else : 
+        else: 
+            # Get number of ants from UI and create ACO
+            try:
+                self.nb_ants = self.ant.get()  # IntVar already returns an integer
+            except (ValueError, tk.TclError):
+                return
+            
+            # Create ACO model
+            if self.graph is not None:
+                for view_ant in self.view_ants:
+                    if hasattr(view_ant, 'canvas_id') and view_ant.canvas_id:
+                        self.canvas1.delete(view_ant.canvas_id)
+                self.aco = AcoModel(self.graph, self.nb_ants, self.alpha, self.beta, self.evaporation)
+                self.model_ants = self.aco.ants
+                self.view_ants = [viewAnt(0, 0) for _ in self.model_ants]
+                self.spawn_ants()
+                self.save_initial_state()
+                
+                # Update display with actual number of ants created
+                actual_nb_ants = len(self.aco.ants)
+                self.nb_ants = actual_nb_ants
+                self.ants_info_label.config(text=f"Number of ants set to: {actual_nb_ants}",font=self.info_font)
+            
             self.step_aco_label.config(text=f"ACO: running")
             self.play = True
             self.mode = "live"
