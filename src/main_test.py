@@ -80,7 +80,7 @@ def main():
         if frame.aco is None:
             return
             
-        if step_count >= max_steps:
+        if frame.current_step >= max_steps:
             print("ACO finished")
             frame.play = False  # Stop the animation loop
             return

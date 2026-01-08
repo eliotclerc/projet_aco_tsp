@@ -234,6 +234,7 @@ class Main_frame(tk.ttk.Frame):
     - disabling configuration inputs
     - enabling the animation loop
         """     
+        
         self.step_aco_label.config(text=f"ACO: running")
         if self.animating:
             self.paused = False
@@ -247,28 +248,38 @@ class Main_frame(tk.ttk.Frame):
                 return
             
             # Create ACO model
-            if self.graph is not None:
-                for view_ant in self.view_ants:
-                    if hasattr(view_ant, 'canvas_id') and view_ant.canvas_id:
-                        self.canvas1.delete(view_ant.canvas_id)
-                self.aco = AcoModel(self.graph, self.nb_ants, self.alpha, self.beta, self.evaporation)
-                self.model_ants = self.aco.ants
-                self.view_ants = [viewAnt(0, 0) for _ in self.model_ants]
-                self.spawn_ants()
-                self.save_initial_state()
-                
-                # Update display with actual number of ants created
-                actual_nb_ants = len(self.aco.ants)
-                self.nb_ants = actual_nb_ants
-                self.ants_info_label.config(text=f"Number of ants set to: {actual_nb_ants}",font=self.info_font)
             
-            
+            try:
+                self.nb_ants = self.ant.get()
+            except (ValueError, tk.TclError):
+                return
+
+            # Toujours créer une nouvelle ACO
+            self.aco = AcoModel(self.graph, self.nb_ants, self.alpha, self.beta, self.evaporation)
+            self.model_ants = self.aco.ants
+
+            # Reset visuel des fourmis
+            for view_ant in self.view_ants:
+                if hasattr(view_ant, 'canvas_id') and view_ant.canvas_id:
+                    self.canvas1.delete(view_ant.canvas_id)
+
+            self.view_ants = [viewAnt(0, 0) for _ in self.model_ants]
+
+            self.spawn_ants()
+            self.save_initial_state()
+
+            actual_nb_ants = len(self.aco.ants)
+            self.nb_ants = actual_nb_ants
+            self.ants_info_label.config(text=f"Number of ants set to: {actual_nb_ants}", font=self.info_font)
+
+
             self.play = True
             self.mode = "live"
             self.timeline.clear()
             self.step_slider.config(state="disabled")
             self.set_button.config(state=tk.DISABLED)
             self.ant_entry.config(state=tk.DISABLED)
+           
 
     def stop(self):
         """
@@ -519,6 +530,7 @@ class Main_frame(tk.ttk.Frame):
     - re-enables configuration controls
     - prepares the application for a new run
         """
+        self.aco = None
         self.play = False
         self.animating = False
         self.paused = False
@@ -526,6 +538,10 @@ class Main_frame(tk.ttk.Frame):
         self.current_step = 0 
         self.step_info_label.config(text=f"Step counter: {self.current_step} / {self.max_steps}")
         self.step_aco_label.config(text=f"ACO status: settings")
+        self.set_button.config(state=tk.NORMAL)
+        self.ant_entry.config(state=tk.NORMAL)
+        self.save_button.config(state=tk.DISABLED)
+
 
         for ant in self.view_ants:
             ant.move_queue.clear()
@@ -545,6 +561,10 @@ class Main_frame(tk.ttk.Frame):
 
     
         self.step_slider.config(state="disabled", to=0)
+        self.mode = "live"
+        self.current_step = 0
+        self.timeline.clear()
+
         self.step_slider.set(0)
         self.anim_id += 1
         self.set_button.config(state=tk.NORMAL)
