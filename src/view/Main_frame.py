@@ -234,7 +234,7 @@ class Main_frame(tk.ttk.Frame):
     - disabling configuration inputs
     - enabling the animation loop
         """     
-
+        self.step_aco_label.config(text=f"ACO: running")
         if self.animating:
             self.paused = False
         else: 
@@ -260,7 +260,7 @@ class Main_frame(tk.ttk.Frame):
                 self.nb_ants = actual_nb_ants
                 self.ants_info_label.config(text=f"Number of ants set to: {actual_nb_ants}",font=self.info_font)
             
-            self.step_aco_label.config(text=f"ACO: running")
+            
             self.play = True
             self.mode = "live"
             self.timeline.clear()

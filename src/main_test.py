@@ -60,11 +60,16 @@ def main():
     frame.automated = True
     frame.mode = "live"
     
+    
+
+    """
+    j'ai commenté auto start pcq l'algo est censé commencer uniquement quand on appuis sur le bouton
+    """
     # Automatically start the ACO after a short delay (for automated mode)
-    def auto_start():
-        if frame.aco is None:  # Only start if ACO hasn't been created yet
-            frame.start()
-    app.after(100, auto_start)  # Start after 100ms to let UI initialize
+    # def auto_start():
+    #     if frame.aco is None:  # Only start if ACO hasn't been created yet
+    #         frame.start()
+    # app.after(100, auto_start)  # Start after 100ms to let UI initialize
 
     
     def run_aco_step():
