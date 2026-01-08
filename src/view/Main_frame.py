@@ -237,6 +237,8 @@ class Main_frame(tk.ttk.Frame):
         self.step_aco_label.config(text=f"ACO: running")
         if self.animating:
             self.paused = False
+            self.play = True
+
         else: 
             # Get number of ants from UI and create ACO
             try:
@@ -277,6 +279,8 @@ class Main_frame(tk.ttk.Frame):
         """
         if self.animating:
             self.paused = True
+            self.play = False
+
             self.step_aco_label.config(text=f"Paused")
 
 

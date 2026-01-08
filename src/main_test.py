@@ -65,6 +65,7 @@ def main():
     """
     j'ai commenté auto start pcq l'algo est censé commencer uniquement quand on appuis sur le bouton
     """
+    
     # Automatically start the ACO after a short delay (for automated mode)
     # def auto_start():
     #     if frame.aco is None:  # Only start if ACO hasn't been created yet
