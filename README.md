@@ -10,5 +10,6 @@ Raph j'ai besoin de : La position des whs(int, int) et de leur nombre, pareil po
 
 
 
-[Lien vers le canva de la présentation](https://drive.google.com/file/d/1-r0LRaI8FDxSS3JDfUb1IsWafsjUlUZo/view?usp=sharing)
+[Lien vers le canva de la présentation](https://www.canva.com/design/DAG-NaejfYg/6hW8MHHNKPQ-w3IWpiImbQ/edit?utm_content=DAG-NaejfYg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 
