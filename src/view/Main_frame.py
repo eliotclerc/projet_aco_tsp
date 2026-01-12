@@ -210,9 +210,9 @@ class Main_frame(tk.ttk.Frame):
     If ACO already exists, shows the actual number of ants in ACO.
         """      
         try:
-            value = self.ant.get()  # IntVar already returns an integer
+            value = self.ant.get() 
             self.nb_ants = value
-            # If ACO exists, show actual number of ants, otherwise show the set value
+
             if self.aco is not None:
                 actual_nb_ants = len(self.aco.ants)
                 self.ants_info_label.config(text=f"Number of ants set to: {value} (ACO has {actual_nb_ants} ants)",font=self.info_font)
@@ -243,7 +243,7 @@ class Main_frame(tk.ttk.Frame):
         else: 
             # Get number of ants from UI and create ACO
             try:
-                self.nb_ants = self.ant.get()  # IntVar already returns an integer
+                self.nb_ants = self.ant.get()  
             except (ValueError, tk.TclError):
                 return
             
