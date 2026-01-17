@@ -42,14 +42,10 @@ def main():
     # Create tkinter app & frame and lists
     app = Frame_app()
     whs, edge_screen = lists_from_view_model_to_view(whs_vm=vmw.get_positions(), vme=vme, screen_geom=app.get_geom())
-    frame = Main_frame(app, warehouses=whs, ants=vma, edges=edge_screen, vme=vme, max_steps=max_steps, 
-                       graph=graph, alpha=alpha, beta=beta, evaporation=evaporation)
+    frame = Main_frame(app, warehouses=whs, ants=vma, edges=edge_screen, vme=vme, max_steps=max_steps, graph=graph, alpha=alpha, beta=beta, evaporation=evaporation)
 
     # Act upon windows and lists
     frame.init_container_on_canva()
-    # Don't call spawn_ants() here - ants will be created when ACO is initialized in start()
-    # frame.spawn_ants()  # Removed - no ants exist yet
-    # frame.save_initial_state()  # Removed - will be called after ants are spawned
 
     # Set default number of ants in UI (e.g., 10)
     default_nb_ants = 10
@@ -59,19 +55,6 @@ def main():
     # Set automated mode
     frame.automated = True
     frame.mode = "live"
-    
-    
-
-    """
-    j'ai commenté auto start pcq l'algo est censé commencer uniquement quand on appuis sur le bouton
-    """
-    
-    # Automatically start the ACO after a short delay (for automated mode)
-    # def auto_start():
-    #     if frame.aco is None:  # Only start if ACO hasn't been created yet
-    #         frame.start()
-    # app.after(100, auto_start)  # Start after 100ms to let UI initialize
-
     
     def run_aco_step():
         nonlocal step_count
