@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
-from src.model.ant import Ant
-from src.viewModel.viewModelWarehouse import ViewModelWarehouse
+from model.ant import Ant
+from viewModel.viewModelWarehouse import ViewModelWarehouse
 
 
 class ViewModelAnt:

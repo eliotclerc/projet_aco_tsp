@@ -1,7 +1,7 @@
 from typing import List, Tuple, Optional
 import numpy as np
 
-from src.model.graph import Graph
+from model.graph import Graph
 
 
 class ViewModelWarehouse:
