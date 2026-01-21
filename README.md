@@ -7,6 +7,19 @@ Project applied computer programming
 [Link to the canva presentation](https://www.canva.com/design/DAG-NaejfYg/6hW8MHHNKPQ-w3IWpiImbQ/edit?utm_content=DAG-NaejfYg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
+External libraries used: 
+
+tkinter
+ttkbootstrap
+matplotlib.pyplot
+matplotlib.colors
+matplotlib.cm
+PIL
+pathlib
+collections
+numpy
+random
+
 
 
 Eliot Clerc
