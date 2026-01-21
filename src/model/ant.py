@@ -7,6 +7,26 @@ from random import randint
 
 #choose uniformely if all weight are 0
 def safe_choices(population, weights=None, *, k=1):
+    """
+    Select element(s) from a population with optional weights.
+
+    Falls back to uniform selection if weights are None or their sum is zero.
+
+    Parameters
+    ----------
+    population : list
+        Elements to sample from.
+    weights : list[float] | None, optional
+        Selection weights.
+    k : int, optional
+        Number of elements to select.
+
+    Returns
+    -------
+    Any | list
+        Selected element if k == 1, otherwise a list.
+    """
+
     if len(population) == 1:
         result = [population[0]]
         return result[0] if k == 1 else result
@@ -26,10 +46,35 @@ def safe_choices(population, weights=None, *, k=1):
 
 
 class Ant:
+    """
+    Represents an ant in the Ant Colony Optimization algorithm.
+
+    The ant builds a cycle, deposits pheromone, and can be reset for a new
+    iteration.
+
+    Attributes
+    ----------
+    current_cycle : Cycle
+        Current cycle built by the ant.
+    visited_node : bool[]
+        Visited nodes mask.
+    """
+
     current_cycle = None
     visited_node = None
 
     def __init__(self, starting_node_id, graph_nb_node):
+        """
+        Initialize the ant with a starting node and visitation state.
+
+        Parameters
+        ----------
+        starting_node_id : int
+            Starting node identifier.
+        graph_nb_node : int
+            Number of nodes in the graph.
+        """
+
         self.current_cycle = Cycle()
 
         # create visited node array to mark it
@@ -40,6 +85,24 @@ class Ant:
         self.visited_node[starting_node_id] = True
 
     def go_to(self, graph: Graph, alpha: float, beta: float):
+        """
+        Move the ant to the next node using pheromone and heuristic weights.
+
+        Parameters
+        ----------
+        graph : Graph
+            Graph containing distances and pheromones.
+        alpha : float
+            Pheromone influence factor.
+        beta : float
+            Heuristic influence factor.
+
+        Raises
+        ------
+        RuntimeError
+            If no unvisited nodes remain.
+        """
+
         distance = graph.distance
         pheromone = graph.pheromone.pheromone_quantity
 
@@ -75,6 +138,15 @@ class Ant:
 
 
     def pheromone_deposit(self, graph : Graph):
+        """
+        Deposit pheromone on the graph based on the current cycle.
+
+        Parameters
+        ----------
+        graph : Graph
+            Graph whose pheromone matrix is updated.
+        """
+
         distance_matrix = graph.distance
         pheromone_matrix = graph.pheromone.pheromone_quantity
 
@@ -92,6 +164,10 @@ class Ant:
             prec_node_id = curr_node_id
 
     def reset_cycle(self):
+            """
+            Reset the ant state and choose a new random starting node.
+            """
+
             graph_nb_node = len(self.visited_node)
 
             # reset visited nodes
