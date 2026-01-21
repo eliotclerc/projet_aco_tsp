@@ -3,8 +3,8 @@ Main author: Eliot Clerc
 """
 from random import randint
 
-from model.ant import Ant
-from model.graph import Graph
+from src.model.ant import Ant
+from src.model.graph import Graph
 
 def create_ants(nb_ants, graph_nb_node):
     """

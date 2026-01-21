@@ -4,13 +4,13 @@ Main author: Benoit Boulard
 import tkinter as tk
 import tkinter.font as tkfont
 from math import sqrt
-from view.viawAnt import viewAnt
+from src.view.viawAnt import viewAnt
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 from PIL import Image, ImageDraw
 from pathlib import Path
-from model.aco import AcoModel
+from src.model.aco import AcoModel
 
 
 class Main_frame(tk.ttk.Frame):

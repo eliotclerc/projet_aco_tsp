@@ -20,7 +20,7 @@ collections
 numpy  
 random 
 
-
+command to compile the porject at the root : python -m src.main_test
 
 Eliot Clerc
 Raphaël Malbec

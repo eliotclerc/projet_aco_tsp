@@ -1,8 +1,8 @@
 """
 Main author: Corentin Romano
 """
-from model.cycle import Cycle
-from model.graph import Graph
+from src.model.cycle import Cycle
+from src.model.graph import Graph
 import numpy as np
 from random import choices
 from random import randint

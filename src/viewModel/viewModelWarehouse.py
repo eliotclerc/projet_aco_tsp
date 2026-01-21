@@ -4,7 +4,7 @@ Main author: Raphaël Malbec
 from typing import List, Tuple, Optional
 import numpy as np
 
-from model.graph import Graph
+from src.model.graph import Graph
 
 
 class ViewModelWarehouse:

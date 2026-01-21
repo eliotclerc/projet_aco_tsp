@@ -1,18 +1,18 @@
 import time
 import tkinter as tk
 from tkinter import ttk
-from view.Frame_app import Frame_app
-from view.Main_frame import Main_frame
-from view.viewWarehouse import viewWarehouse
-from view.viawAnt import viewAnt
-from view.viewEdge import viewEdge
-from view.view_main import lists_from_view_model_to_view
-from viewModel.viewModelAnt import ViewModelAnt
-from viewModel.viewModelWarehouse import ViewModelWarehouse
-from viewModel.viewModelEdge import ViewModelEdge
-from model.graph import Graph
-from model.ant import Ant
-from model.aco import AcoModel
+from src.view.Frame_app import Frame_app
+from src.view.Main_frame import Main_frame
+from src.view.viewWarehouse import viewWarehouse
+from src.view.viawAnt import viewAnt
+from src.view.viewEdge import viewEdge
+from src.view.view_main import lists_from_view_model_to_view
+from src.viewModel.viewModelAnt import ViewModelAnt
+from src.viewModel.viewModelWarehouse import ViewModelWarehouse
+from src.viewModel.viewModelEdge import ViewModelEdge
+from src.model.graph import Graph
+from src.model.ant import Ant
+from src.model.aco import AcoModel
 
 
 def main():

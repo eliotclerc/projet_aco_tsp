@@ -1,8 +1,8 @@
 """
 Main author: Eliot Clerc
 """
-from input_output.csv_reader import load_distance_matrix
-from model.pheromone_matrix import PheromoneMatrix
+from src.input_output.csv_reader import load_distance_matrix
+from src.model.pheromone_matrix import PheromoneMatrix
 class Graph:
     """
     Graph containing a distance matrix and its associated pheromone matrix.

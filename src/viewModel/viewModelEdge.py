@@ -3,7 +3,7 @@ Main author: Raphaël Malbec
 """
 import numpy as np
 
-from model.graph import Graph
+from src.model.graph import Graph
 
 
 class ViewModelEdge:
