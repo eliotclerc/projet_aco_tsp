@@ -1,5 +1,6 @@
-
-
+"""
+Main author: Benoit Boulard
+"""
 
 class viewEdge :
     

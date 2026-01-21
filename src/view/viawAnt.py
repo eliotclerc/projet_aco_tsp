@@ -1,3 +1,6 @@
+"""
+Main author: Benoit Boulard
+"""
 from collections import deque
 class viewAnt :
     """

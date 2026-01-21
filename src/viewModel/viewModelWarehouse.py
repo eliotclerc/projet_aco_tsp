@@ -1,3 +1,6 @@
+"""
+Main author: Raphaël Malbec
+"""
 from typing import List, Tuple, Optional
 import numpy as np
 

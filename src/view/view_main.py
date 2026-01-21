@@ -1,3 +1,6 @@
+"""
+Main author: Corentin Romano
+"""
 import tkinter as tk
 from tkinter import ttk
 from .Frame_app import Frame_app

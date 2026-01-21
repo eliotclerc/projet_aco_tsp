@@ -1,3 +1,6 @@
+"""
+Main author: Eliot Clerc
+"""
 import numpy as np
 
 class Cycle:

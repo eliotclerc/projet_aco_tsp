@@ -1,3 +1,6 @@
+"""
+Main author: Corentin Romano
+"""
 from model.cycle import Cycle
 from model.graph import Graph
 import numpy as np

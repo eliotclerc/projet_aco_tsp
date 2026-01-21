@@ -1,3 +1,6 @@
+"""
+Main author: Eliot Clerc
+"""
 from random import randint
 
 from model.ant import Ant

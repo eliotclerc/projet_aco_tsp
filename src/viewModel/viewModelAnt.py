@@ -1,3 +1,6 @@
+"""
+Main author: Corentin Romano
+"""
 from typing import List, Optional, Tuple
 
 from model.ant import Ant

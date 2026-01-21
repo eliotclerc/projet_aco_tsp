@@ -1,3 +1,6 @@
+"""
+Main author: Raphaël Malbec
+"""
 import numpy as np
 
 from model.graph import Graph

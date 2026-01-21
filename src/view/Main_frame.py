@@ -1,3 +1,6 @@
+"""
+Main author: Benoit Boulard
+"""
 import tkinter as tk
 import tkinter.font as tkfont
 from math import sqrt

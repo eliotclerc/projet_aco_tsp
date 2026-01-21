@@ -1,3 +1,7 @@
+"""
+Main author: Benoit Boulard
+"""
+
 class viewWarehouse : 
     """
     Visual representation of a warehouse.

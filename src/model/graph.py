@@ -1,3 +1,6 @@
+"""
+Main author: Eliot Clerc
+"""
 from input_output.csv_reader import load_distance_matrix
 from model.pheromone_matrix import PheromoneMatrix
 class Graph:

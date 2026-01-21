@@ -1,3 +1,6 @@
+"""
+Main author: Eliot Clerc
+"""
 from numpy import zeros, nditer
 
 class PheromoneMatrix:
