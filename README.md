@@ -9,16 +9,16 @@ Project applied computer programming
 
 External libraries used: 
 
-tkinter
-ttkbootstrap
-matplotlib.pyplot
-matplotlib.colors
-matplotlib.cm
-PIL
-pathlib
-collections
-numpy
-random
+tkinter  
+ttkbootstrap  
+matplotlib.pyplot  
+matplotlib.colors 
+matplotlib.cm  
+PIL  
+pathlib  
+collections  
+numpy  
+random 
 
 
 
